@@ -45,17 +45,38 @@ void localPlay::onEnter()
 	log("local play scene onEnter");
 	
 	auto keyboardListener = EventListenerKeyboard::create();
-	//Sprite* playerSprite = static_cast<Sprite*>(this->getChildByTag(201));
-	//Vec2 playerPos = playerSprite->
+	Sprite* playerSprite = static_cast<Sprite*>(this->getChildByTag(201));
+	
 	//使用Lambda表达式处理键盘事件
-	keyboardListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event *event) {
-		
-		if (keyCode == EventKeyboard::KeyCode::KEY_W)
+	//捕获sprite
+	keyboardListener->onKeyPressed = [playerSprite](EventKeyboard::KeyCode keyCode, Event *event) {
+		Vec2 playerPos = playerSprite->getPosition();
+		switch (keyCode)
 		{
-			log("Key with keycode %d  W pressed", keyCode);
+		case EventKeyboard::KeyCode::KEY_W:
+			playerPos.y += 3;
+			log("Move up");
+			break;
+		case EventKeyboard::KeyCode::KEY_S:
+			playerPos.y -= 3;
+			log("Move down");
+			break;
+		case EventKeyboard::KeyCode::KEY_A:
+			playerPos.x -= 4;
+			log("Move left");
+			break;
+		case EventKeyboard::KeyCode::KEY_D:
+			playerPos.x += 4;
+			log("Move right");
+			break;
+		default:
+			log("Key with keycode %d pressed", keyCode);
+			break;
 		}
-		
+		playerSprite->setPosition(playerPos);
 	};
+
+	//按键释放
 	keyboardListener->onKeyReleased = [](EventKeyboard::KeyCode keyCode, Event *event) {
 		log("Key with keycode %d released", keyCode);
 	};

@@ -37,25 +37,24 @@ bool HelloWorld::init()
 	//选择按钮
 	auto singleModeButton = ui::Button::create("buttonSingle.png");
 	singleModeButton->setPosition(Vec2(origin.x + visibleSize.width / 3, origin.y + visibleSize.height / 3));
-	singleModeButton->addTouchEventListener(CC_CALLBACK_2(HelloWorld::localButtonCallBack, this));
+	
+	//利用lambda表达式处理单击
+	singleModeButton->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
+		log("Single Local Play Mode");
+		auto localScene = localPlay::createScene();
+		auto reScene = TransitionFade::create(1.0f, localScene);
+		switch (type)
+		{
+		case ui::Widget::TouchEventType::BEGAN:
+			log("switch scene");
+			Director::getInstance()->replaceScene(reScene);
+			break;
+		default:
+			break;
+		}
+	});
 	singleModeButton->setPressedActionEnabled(true);
 	this->addChild(singleModeButton, 1);
     return true;
-}
-
-void HelloWorld::localButtonCallBack(Ref *pSender, ui::Widget::TouchEventType type)
-{
-	log("Single Local Play Mode");
-	auto localScene = localPlay::createScene();
-	auto reScene = TransitionFade::create(1.0f, localScene);
-	switch (type)
-	{
-	case ui::Widget::TouchEventType::BEGAN:		
-		log("switch scene");
-		Director::getInstance()->replaceScene(reScene);
-		break;
-	default:
-		break;
-	}
 }
 

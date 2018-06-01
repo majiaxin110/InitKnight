@@ -11,7 +11,6 @@ public:
 
     virtual bool init();
     
-	void localButtonCallBack(Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
     // implement the "static create()" method maddnually
     CREATE_FUNC(HelloWorld);
 };

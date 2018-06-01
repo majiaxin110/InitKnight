@@ -12,6 +12,7 @@ public:
 	bool heroDirection;//×óÓÒ³¯Ïò£¬0ÏòÓÒ£¬1Ïò×ó
 	Hero();
 	void initHeroSprite();
+	void keyPressedDo(cocos2d::EventKeyboard::KeyCode keyCode);
 	CREATE_FUNC(Hero);
 };
 

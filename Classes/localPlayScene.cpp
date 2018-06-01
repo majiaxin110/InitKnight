@@ -15,6 +15,15 @@ bool localPlay::init()
 	//尺寸
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	//键盘状态记录初始化
+	keyStatus[EventKeyboard::KeyCode::KEY_W] = false;
+	keyStatus[EventKeyboard::KeyCode::KEY_S] = false;
+	keyStatus[EventKeyboard::KeyCode::KEY_A] = false;
+	keyStatus[EventKeyboard::KeyCode::KEY_D] = false;
+	keyStatus[EventKeyboard::KeyCode::KEY_Q] = false;
+	keyStatus[EventKeyboard::KeyCode::KEY_SPACE] = false;
+
 	//瓦片地图
 	tileMap = TMXTiledMap::create("testMap/localMap.tmx");
 	
@@ -27,14 +36,17 @@ bool localPlay::init()
 		float startX = spawnStartPoint["x"].asFloat();
 		float startY = spawnStartPoint["y"].asFloat();
 
-		player = Sprite::create("testMap/Player.png");
-		player->setPosition(Vec2(startX, startY));
-		this->addChild(player, 1, 201);//Tag = 201
+		hero = Hero::create();
+		hero->initHeroSprite();
+		hero->setPosition(Vec2(startX, startY));
+		this->addChild(hero, 1, 201);//Tag = 201
 	}
 	else
 	{
 		log("map error!");
 	}
+	
+	this->scheduleUpdate();
 
 	return true;
 }
@@ -45,42 +57,77 @@ void localPlay::onEnter()
 	log("local play scene onEnter");
 	
 	auto keyboardListener = EventListenerKeyboard::create();
-	Sprite* playerSprite = static_cast<Sprite*>(this->getChildByTag(201));
 	
 	//使用Lambda表达式处理键盘事件
-	//捕获sprite
-	keyboardListener->onKeyPressed = [playerSprite](EventKeyboard::KeyCode keyCode, Event *event) {
-		Vec2 playerPos = playerSprite->getPosition();
+	//捕获this以使用成员变量
+	keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) 
+	{
+		keyStatus[keyCode] = true;
+		log("%d pressed", keyCode);
+	};
+	
+
+	//按键释放
+	keyboardListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event *event) 
+	{
+		keyStatus[keyCode] = false;
+		log("%d released", keyCode);
+	};
+
+	EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
+	eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+}
+
+cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
+{
+	if (keyStatus[EventKeyboard::KeyCode::KEY_W])
+		return EventKeyboard::KeyCode::KEY_W;
+	if (keyStatus[EventKeyboard::KeyCode::KEY_A])
+		return EventKeyboard::KeyCode::KEY_A;
+	if (keyStatus[EventKeyboard::KeyCode::KEY_S])
+		return EventKeyboard::KeyCode::KEY_S;
+	if (keyStatus[EventKeyboard::KeyCode::KEY_D])
+		return EventKeyboard::KeyCode::KEY_D;
+	if (keyStatus[EventKeyboard::KeyCode::KEY_Q])
+		return EventKeyboard::KeyCode::KEY_Q;
+	if (keyStatus[EventKeyboard::KeyCode::KEY_SPACE])
+		return EventKeyboard::KeyCode::KEY_SPACE;
+	return EventKeyboard::KeyCode::KEY_NONE;
+}
+
+void localPlay::update(float delta)
+{
+	Node::update(delta);
+	EventKeyboard::KeyCode pressedKey = whichPressed();
+	if (pressedKey != EventKeyboard::KeyCode::KEY_NONE)
+	{
+		hero->keyPressedDo(pressedKey);
+	}
+}
+
+/*keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event *event) {
+		Vec2 playerPos = hero->getPosition();
 		switch (keyCode)
 		{
 		case EventKeyboard::KeyCode::KEY_W:
-			playerPos.y += 3;
+			playerPos.y += 30;
 			log("Move up");
 			break;
 		case EventKeyboard::KeyCode::KEY_S:
-			playerPos.y -= 3;
+			playerPos.y -= 30;
 			log("Move down");
 			break;
 		case EventKeyboard::KeyCode::KEY_A:
-			playerPos.x -= 4;
+			playerPos.x -= 40;
 			log("Move left");
 			break;
 		case EventKeyboard::KeyCode::KEY_D:
-			playerPos.x += 4;
+			playerPos.x += 40;
 			log("Move right");
 			break;
 		default:
 			log("Key with keycode %d pressed", keyCode);
 			break;
 		}
-		playerSprite->setPosition(playerPos);
-	};
-
-	//按键释放
-	keyboardListener->onKeyReleased = [](EventKeyboard::KeyCode keyCode, Event *event) {
-		log("Key with keycode %d released", keyCode);
-	};
-
-	EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
-	eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
-}
+		hero->setPosition(playerPos);
+		};*/

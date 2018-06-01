@@ -2,6 +2,7 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 
 class HelloWorld : public cocos2d::Scene
 {
@@ -10,8 +11,8 @@ public:
 
     virtual bool init();
     
-    
-    // implement the "static create()" method manually
+	void localButtonCallBack(Ref *pSender, cocos2d::ui::Widget::TouchEventType type);
+    // implement the "static create()" method maddnually
     CREATE_FUNC(HelloWorld);
 };
 

@@ -7,12 +7,16 @@ class Hero :public cocos2d::Node
 {
 private:
 	cocos2d::Sprite* cHeroSprite;
+	float moveSpeed;//可移动的速度
 public:
 	bool isMoving;//是否正在移动
 	bool heroDirection;//左右朝向，0向右，1向左
+
 	Hero();
+
+	float getMoveSpeed();
 	void initHeroSprite();
-	void keyPressedDo(cocos2d::EventKeyboard::KeyCode keyCode);
+
 	CREATE_FUNC(Hero);
 };
 

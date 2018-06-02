@@ -1,4 +1,5 @@
 #include "hero.h"
+#include "localPlayScene.h"
 
 USING_NS_CC;
 
@@ -7,6 +8,7 @@ Hero::Hero()
 	isMoving = false;
 	heroDirection = 0;
 	cHeroSprite = nullptr;
+	moveSpeed = 1.5f;
 }
 
 void Hero::initHeroSprite()
@@ -15,26 +17,14 @@ void Hero::initHeroSprite()
 	this->addChild(cHeroSprite);
 }
 
-void Hero::keyPressedDo(cocos2d::EventKeyboard::KeyCode keyCode)
+float Hero::getMoveSpeed()
 {
-	int deltaX = 0, deltaY = 0;
-	switch (keyCode) 
-	{
-	case EventKeyboard::KeyCode::KEY_W:
-		deltaY = 3;
-		break;
-	case EventKeyboard::KeyCode::KEY_A:
-		deltaX = -3;
-		break;
-	case EventKeyboard::KeyCode::KEY_S:
-		deltaY = -3;
-		break;
-	case EventKeyboard::KeyCode::KEY_D:
-		deltaX = 3;
-		break;
-	default:
-		deltaY = deltaX = 0;
-		break;
-	}
-	this->runAction(MoveBy::create(0.2f, Vec2(deltaX, deltaY)));	//给我动起来
+	return moveSpeed;
 }
+
+bool isCollid(Vec2 pos)
+{
+//	cocos2d::TMXLayer *blockBarriers = static_cast<localPlay*>(this->getParent())->barriers;
+	return false;
+}
+

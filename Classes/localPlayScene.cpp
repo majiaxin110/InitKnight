@@ -26,7 +26,7 @@ bool localPlay::init()
 
 	//瓦片地图
 	tileMap = TMXTiledMap::create("testMap/localMap.tmx");
-	
+	barriers = tileMap->getLayer("barriers");
 	if (tileMap != nullptr)
 	{
 		this->addChild(tileMap, 0, 100);//Tag = 100
@@ -45,7 +45,7 @@ bool localPlay::init()
 	{
 		log("map error!");
 	}
-	
+
 	this->scheduleUpdate();
 
 	return true;
@@ -55,20 +55,20 @@ void localPlay::onEnter()
 {
 	Scene::onEnter();
 	log("local play scene onEnter");
-	
+
 	auto keyboardListener = EventListenerKeyboard::create();
-	
+
 	//使用Lambda表达式处理键盘事件
 	//捕获this以使用成员变量
-	keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event) 
+	keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		keyStatus[keyCode] = true;
 		log("%d pressed", keyCode);
 	};
-	
+
 
 	//按键释放
-	keyboardListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event *event) 
+	keyboardListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event *event)
 	{
 		keyStatus[keyCode] = false;
 		log("%d released", keyCode);
@@ -101,33 +101,65 @@ void localPlay::update(float delta)
 	EventKeyboard::KeyCode pressedKey = whichPressed();
 	if (pressedKey != EventKeyboard::KeyCode::KEY_NONE)
 	{
-		hero->keyPressedDo(pressedKey);
+		setHero(pressedKey);
 	}
 }
 
-/*keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event *event) {
-		Vec2 playerPos = hero->getPosition();
-		switch (keyCode)
-		{
-		case EventKeyboard::KeyCode::KEY_W:
-			playerPos.y += 30;
-			log("Move up");
-			break;
-		case EventKeyboard::KeyCode::KEY_S:
-			playerPos.y -= 30;
-			log("Move down");
-			break;
-		case EventKeyboard::KeyCode::KEY_A:
-			playerPos.x -= 40;
-			log("Move left");
-			break;
-		case EventKeyboard::KeyCode::KEY_D:
-			playerPos.x += 40;
-			log("Move right");
-			break;
-		default:
-			log("Key with keycode %d pressed", keyCode);
-			break;
-		}
-		hero->setPosition(playerPos);
-		};*/
+Vec2 localPlay::tileCoordFromPosition(Vec2 pos)
+{
+	int x = pos.x / tileMap->getTileSize().width;
+	int y = ((tileMap->getMapSize().height * tileMap->getTileSize().height)
+		- pos.y) / tileMap->getTileSize().height;
+	return Vec2(x, y);
+}
+bool localPlay::isCollid(Vec2 pos)
+{
+	Vec2 tileCoord = this->tileCoordFromPosition(pos);
+	int tileGid = this->barriers->getTileGIDAt(tileCoord);
+		//获取属性
+	if (tileGid > 0)
+	{
+		Value prop = tileMap->getPropertiesForGID(tileGid);
+
+		ValueMap propValueM = prop.asValueMap();
+		std::string isPropCrash = propValueM["isCollidable"].asString();
+		if (isPropCrash == "true")//真实碰撞
+			return true;
+	}
+	
+	return false;
+}
+
+void localPlay::setHero(cocos2d::EventKeyboard::KeyCode keyCode)
+{
+	int deltaX = 0, deltaY = 0;
+	const float mSpeed = hero->getMoveSpeed();
+	switch (keyCode)
+	{
+	case EventKeyboard::KeyCode::KEY_W:
+		deltaY = mSpeed;
+		break;
+	case EventKeyboard::KeyCode::KEY_A:
+		deltaX = -mSpeed;
+		break;
+	case EventKeyboard::KeyCode::KEY_S:
+		deltaY = -mSpeed;
+		break;
+	case EventKeyboard::KeyCode::KEY_D:
+		deltaX = mSpeed;
+		break;
+	default:
+		deltaY = deltaX = 0;
+		break;
+	}
+	Vec2 previousLoc = localPlay::hero->getPosition();
+	Vec2 currentLoc;
+	currentLoc.x = previousLoc.x + deltaX;	currentLoc.y = previousLoc.y + deltaY;
+	if (!(currentLoc.x<0 || currentLoc.y<0
+		|| currentLoc.x > Director::getInstance()->getVisibleSize().width
+		|| currentLoc.y > Director::getInstance()->getVisibleSize().height)
+		&& !isCollid(currentLoc))//既没有越界又没碰撞
+		hero->runAction(MoveBy::create(0.01f, Vec2(deltaX, deltaY)));
+	else
+		log("beyond");	//给我动起来
+}

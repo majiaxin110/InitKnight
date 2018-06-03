@@ -4,16 +4,18 @@
 #include "cocos2d.h"
 #include "SimpleAudioEngine.h"
 #include "hero.h"
+#include "bloodProgress.h"
 #include <map>
 
-class localPlay : public cocos2d::Scene
+class localPlay : public cocos2d::Layer
 {
+private:
 	cocos2d::TMXTiledMap* _tileMap;
 	cocos2d::TMXLayer* _collidable;
-	//cocos2d::Sprite *hero;
+	cocos2d::TMXLayer* _heart;
 	Hero *hero;
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
-
+	ProgressView *m_pProgressView;
 public:
 	// there's no 'id' in cpp, so we recommend returning the class instance Vec2er
 	static cocos2d::Scene* createScene();

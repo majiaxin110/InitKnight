@@ -4,7 +4,16 @@ USING_NS_CC;
 
 Scene* localPlay::createScene()
 {
-	return localPlay::create();
+	auto scene = Scene::create();
+
+	// 'layer' is an autorelease object
+	auto layer = localPlay::create();
+
+	layer->setTag(123);
+	// add layer as a child to scene
+	scene->addChild(layer,0);
+
+	return scene;
 }
 
 // on "init" you need to initialize your instance
@@ -12,7 +21,7 @@ bool localPlay::init()
 {
 	//////////////////////////////
 	// 1. super init first
-	if (!Scene::init())
+	if (!Layer::init())
 	{
 		return false;
 	}
@@ -39,6 +48,22 @@ bool localPlay::init()
 	_collidable = _tileMap->getLayer("barriers");
 	_collidable->setVisible(false);
 
+	_heart = _tileMap->getLayer("heart");
+	_heart->setVisible(true);
+	/*
+	auto statusLayer = Layer::create();
+	
+	m_pProgressView = new ProgressView();
+	m_pProgressView->setPosition(Vec2(origin.x + 120, origin.y + 600));
+	m_pProgressView->setScale(2.2f);
+	m_pProgressView->setBackgroundTexture("bloodProgress/bloodBack.png");
+	m_pProgressView->setForegroundTexture("bloodProgress/bloodFore.png");
+	m_pProgressView->setTotalProgress(100.0f);
+	m_pProgressView->setCurrentProgress(50.0f);
+	statusLayer->addChild(m_pProgressView, 5);
+	statusLayer->setPosition(hero->getPosition());
+	this->addChild(statusLayer,1);
+	*/
 	auto keyboardListener = EventListenerKeyboard::create();
 	//使用Lambda表达式处理键盘事件
 	//捕获this以使用成员变量
@@ -77,6 +102,8 @@ cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
 		return EventKeyboard::KeyCode::KEY_D;
 	if (keyStatus[EventKeyboard::KeyCode::KEY_Q])
 		return EventKeyboard::KeyCode::KEY_Q;
+	if (keyStatus[EventKeyboard::KeyCode::KEY_J])
+		return EventKeyboard::KeyCode::KEY_J;
 	if (keyStatus[EventKeyboard::KeyCode::KEY_SPACE])
 		return EventKeyboard::KeyCode::KEY_SPACE;
 	return EventKeyboard::KeyCode::KEY_NONE;
@@ -90,6 +117,7 @@ void localPlay::update(float delta)
 	{
 		onPress(pressedKey);
 	}
+
 }
 
 void localPlay::onPress(EventKeyboard::KeyCode keyCode)
@@ -114,6 +142,9 @@ void localPlay::onPress(EventKeyboard::KeyCode keyCode)
 		hero->setRunAnimation(0);
 		playerPos.x += movSpeed;
 		break;
+	case EventKeyboard::KeyCode::KEY_J:
+		hero->setAttackAnimation();
+		break;
 	default:
 		break;
 	}
@@ -127,7 +158,8 @@ void localPlay::setPlayerPosition(Vec2 position)
 	//获得瓦片的GID
 	int tileGid = _collidable->getTileGIDAt(tileCoord);
 
-	if (tileGid > 0) {
+	if (tileGid > 0)
+	{
 		Value prop = _tileMap->getPropertiesForGID(tileGid);
 		ValueMap propValueMap = prop.asValueMap();
 
@@ -135,6 +167,21 @@ void localPlay::setPlayerPosition(Vec2 position)
 
 		if (collision == "true") { //碰撞检测成功
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("empty.wav");
+			return;
+		}
+	}
+	tileGid = _heart->getTileGIDAt(tileCoord);
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collect = propValueMap["isCollectable"].asString();
+
+		if (collect == "true") { //摄取检测成功
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("empty.wav");
+			_heart->removeTileAt(tileCoord);
+			hero->setUpAnimation();
 			return;
 		}
 	}
@@ -154,9 +201,6 @@ Vec2 localPlay::tileCoordFromPosition(Vec2 pos)
 
 void localPlay::setViewpointCenter(Vec2 position)
 {
-	log("setViewpointCenter");
-
-	log("position (%f ,%f) ", position.x, position.y);
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	//可以防止，视图左边超出屏幕之外。
@@ -172,10 +216,8 @@ void localPlay::setViewpointCenter(Vec2 position)
 	Vec2 pointA = Vec2(visibleSize.width / 2, visibleSize.height / 2);
 	//使精灵处于屏幕中心，移动地图目标位置
 	Vec2 pointB = Vec2(x, y);
-	log("目标位置 (%f ,%f) ", pointB.x, pointB.y);
 
 	//地图移动偏移量
 	Vec2 offset = pointA - pointB;
-	log("offset (%f ,%f) ", offset.x, offset.y);
 	this->setPosition(offset);
 }

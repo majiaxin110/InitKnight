@@ -7,62 +7,44 @@ Scene* localPlay::createScene()
 	return localPlay::create();
 }
 
+// on "init" you need to initialize your instance
 bool localPlay::init()
 {
+	//////////////////////////////
+	// 1. super init first
 	if (!Scene::init())
+	{
 		return false;
+	}
 
-	//尺寸
-	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	//键盘状态记录初始化
-	keyStatus[EventKeyboard::KeyCode::KEY_W] = false;
-	keyStatus[EventKeyboard::KeyCode::KEY_S] = false;
-	keyStatus[EventKeyboard::KeyCode::KEY_A] = false;
-	keyStatus[EventKeyboard::KeyCode::KEY_D] = false;
-	keyStatus[EventKeyboard::KeyCode::KEY_Q] = false;
-	keyStatus[EventKeyboard::KeyCode::KEY_SPACE] = false;
+	_tileMap = TMXTiledMap::create("testMap/bigLocalMap.tmx");
+	addChild(_tileMap, 0, 100);
 
-	//瓦片地图
-	tileMap = TMXTiledMap::create("testMap/localMap.tmx");
-	barriers = tileMap->getLayer("barriers");
-	if (tileMap != nullptr)
-	{
-		this->addChild(tileMap, 0, 100);//Tag = 100
+	TMXObjectGroup* group = _tileMap->getObjectGroup("player");
+	ValueMap spawnPoint = group->getObject("startPoint");
 
-		TMXObjectGroup *group = tileMap->getObjectGroup("player");
-		ValueMap spawnStartPoint = group->getObject("startPoint");
-		float startX = spawnStartPoint["x"].asFloat();
-		float startY = spawnStartPoint["y"].asFloat();
+	float x = spawnPoint["x"].asFloat();
+	float y = spawnPoint["y"].asFloat();
 
-		hero = Hero::create();
-		hero->initHeroSprite();
-		hero->setPosition(Vec2(startX, startY));
-		this->addChild(hero, 1, 201);//Tag = 201
-	}
-	else
-	{
-		log("map error!");
-	}
+	hero = Hero::create();
+	hero->initHeroSprite();
+	hero->setPosition(Vec2(x, y));
+	addChild(hero, 2, 200);
 
-	this->scheduleUpdate();
+	setViewpointCenter(hero->getPosition());
 
-	return true;
-}
-
-void localPlay::onEnter()
-{
-	Scene::onEnter();
-	log("local play scene onEnter");
+	_collidable = _tileMap->getLayer("barriers");
+	_collidable->setVisible(false);
 
 	auto keyboardListener = EventListenerKeyboard::create();
-
 	//使用Lambda表达式处理键盘事件
 	//捕获this以使用成员变量
 	keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event)
 	{
-		keyStatus[keyCode] = true;
+		this->keyStatus[keyCode] = true;
 		log("%d pressed", keyCode);
 	};
 
@@ -70,12 +52,16 @@ void localPlay::onEnter()
 	//按键释放
 	keyboardListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event *event)
 	{
-		keyStatus[keyCode] = false;
+		this->keyStatus[keyCode] = false;
 		log("%d released", keyCode);
 	};
 
 	EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
 	eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+
+	this->scheduleUpdate();
+
+	return true;
 }
 
 cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
@@ -101,65 +87,93 @@ void localPlay::update(float delta)
 	EventKeyboard::KeyCode pressedKey = whichPressed();
 	if (pressedKey != EventKeyboard::KeyCode::KEY_NONE)
 	{
-		setHero(pressedKey);
+		onPress(pressedKey);
 	}
+}
+
+void localPlay::onPress(EventKeyboard::KeyCode keyCode)
+{
+	Vec2 playerPos = hero->getPosition();
+	const int movSpeed = hero->getMoveSpeed();
+	switch (keyCode)
+	{
+	case EventKeyboard::KeyCode::KEY_W:
+		//playerPos.y += _tileMap->getTileSize().height;
+		playerPos.y += movSpeed;
+		break;
+	case EventKeyboard::KeyCode::KEY_A:
+		//playerPos.x -= _tileMap->getTileSize().width;
+		playerPos.x -= movSpeed;
+		break;
+	case EventKeyboard::KeyCode::KEY_S:
+		//playerPos.y -= _tileMap->getTileSize().height;
+		playerPos.y -= movSpeed;
+		break;
+	case EventKeyboard::KeyCode::KEY_D:
+		//playerPos.x += _tileMap->getTileSize().width;
+		playerPos.x += movSpeed;
+		break;
+	default:
+		break;
+	}
+	this->setPlayerPosition(playerPos);
+}
+
+void localPlay::setPlayerPosition(Vec2 position)
+{
+	//从像素点坐标转化为瓦片坐标
+	Vec2 tileCoord = this->tileCoordFromPosition(position);
+	//获得瓦片的GID
+	int tileGid = _collidable->getTileGIDAt(tileCoord);
+
+	if (tileGid > 0) {
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collision = propValueMap["isCollidable"].asString();
+
+		if (collision == "true") { //碰撞检测成功
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("empty.wav");
+			return;
+		}
+	}
+	//移动精灵
+	hero->setPosition(position);
+	//滚动地
+	this->setViewpointCenter(hero->getPosition());
 }
 
 Vec2 localPlay::tileCoordFromPosition(Vec2 pos)
 {
-	int x = pos.x / tileMap->getTileSize().width;
-	int y = ((tileMap->getMapSize().height * tileMap->getTileSize().height)
-		- pos.y) / tileMap->getTileSize().height;
+	int x = pos.x / _tileMap->getTileSize().width;
+	int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - pos.y) / _tileMap->getTileSize().height;
 	return Vec2(x, y);
 }
-bool localPlay::isCollid(Vec2 pos)
-{
-	Vec2 tileCoord = this->tileCoordFromPosition(pos);
-	int tileGid = this->barriers->getTileGIDAt(tileCoord);
-		//获取属性
-	if (tileGid > 0)
-	{
-		Value prop = tileMap->getPropertiesForGID(tileGid);
 
-		ValueMap propValueM = prop.asValueMap();
-		std::string isPropCrash = propValueM["isCollidable"].asString();
-		if (isPropCrash == "true")//真实碰撞
-			return true;
-	}
-	
-	return false;
-}
-
-void localPlay::setHero(cocos2d::EventKeyboard::KeyCode keyCode)
+void localPlay::setViewpointCenter(Vec2 position)
 {
-	int deltaX = 0, deltaY = 0;
-	const float mSpeed = hero->getMoveSpeed();
-	switch (keyCode)
-	{
-	case EventKeyboard::KeyCode::KEY_W:
-		deltaY = mSpeed;
-		break;
-	case EventKeyboard::KeyCode::KEY_A:
-		deltaX = -mSpeed;
-		break;
-	case EventKeyboard::KeyCode::KEY_S:
-		deltaY = -mSpeed;
-		break;
-	case EventKeyboard::KeyCode::KEY_D:
-		deltaX = mSpeed;
-		break;
-	default:
-		deltaY = deltaX = 0;
-		break;
-	}
-	Vec2 previousLoc = localPlay::hero->getPosition();
-	Vec2 currentLoc;
-	currentLoc.x = previousLoc.x + deltaX;	currentLoc.y = previousLoc.y + deltaY;
-	if (!(currentLoc.x<0 || currentLoc.y<0
-		|| currentLoc.x > Director::getInstance()->getVisibleSize().width
-		|| currentLoc.y > Director::getInstance()->getVisibleSize().height)
-		&& !isCollid(currentLoc))//既没有越界又没碰撞
-		hero->runAction(MoveBy::create(0.01f, Vec2(deltaX, deltaY)));
-	else
-		log("beyond");	//给我动起来
+	log("setViewpointCenter");
+
+	log("position (%f ,%f) ", position.x, position.y);
+
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	//可以防止，视图左边超出屏幕之外。
+	int x = MAX(position.x, visibleSize.width / 2);
+	int y = MAX(position.y, visibleSize.height / 2);
+	//可以防止，视图右边超出屏幕之外。
+	x = MIN(x, (_tileMap->getMapSize().width * _tileMap->getTileSize().width)
+		- visibleSize.width / 2);
+	y = MIN(y, (_tileMap->getMapSize().height * _tileMap->getTileSize().height)
+		- visibleSize.height / 2);
+
+	//屏幕中心点
+	Vec2 pointA = Vec2(visibleSize.width / 2, visibleSize.height / 2);
+	//使精灵处于屏幕中心，移动地图目标位置
+	Vec2 pointB = Vec2(x, y);
+	log("目标位置 (%f ,%f) ", pointB.x, pointB.y);
+
+	//地图移动偏移量
+	Vec2 offset = pointA - pointB;
+	log("offset (%f ,%f) ", offset.x, offset.y);
+	this->setPosition(offset);
 }

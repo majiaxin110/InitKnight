@@ -13,7 +13,7 @@ Hero::Hero()
 
 void Hero::initHeroSprite()
 {
-	this->cHeroSprite = Sprite::create("playerHero.png");
+	this->cHeroSprite = Sprite::create("ninja.png");
 	this->addChild(cHeroSprite);
 }
 

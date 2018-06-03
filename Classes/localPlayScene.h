@@ -2,32 +2,37 @@
 #define __LOCALPLAY_SCENE_H__
 
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
 #include "hero.h"
 #include <map>
 
 class localPlay : public cocos2d::Scene
 {
-private:
-	cocos2d::TMXTiledMap *tileMap;
-	cocos2d::TMXLayer *barriers;//障碍物
-	cocos2d::Sprite *player;
-	Hero* hero;
-	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus; //键盘各个按键被按下的状态
+	cocos2d::TMXTiledMap* _tileMap;
+	cocos2d::TMXLayer* _collidable;
+	//cocos2d::Sprite *hero;
+	Hero *hero;
+	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
+
 public:
-	
-
+	// there's no 'id' in cpp, so we recommend returning the class instance Vec2er
 	static cocos2d::Scene* createScene();
-	virtual bool init();
-	virtual void onEnter();
 
-	cocos2d::EventKeyboard::KeyCode whichPressed(); //哪个键当前是按下状态
-	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 pos); //转换瓦片坐标
-	bool isCollid(cocos2d::Vec2 pos);//检测是否与地图墙壁碰撞
-	void setHero(cocos2d::EventKeyboard::KeyCode keyCode);//控制hero
+	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
+	virtual bool init();
+	//virtual void onEnter();
+
+	virtual void onPress(cocos2d::EventKeyboard::KeyCode keyCode);
+
+	cocos2d::EventKeyboard::KeyCode whichPressed();
 	void update(float delta) override;
+
+	void setPlayerPosition(cocos2d::Vec2 position);
+	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);
+	void setViewpointCenter(cocos2d::Vec2 position);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(localPlay);
 };
 
-#endif // __LOCALPLAY_SCENE_H_
+#endif // __LOCALPLAY_SCENE_H__

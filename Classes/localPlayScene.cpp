@@ -53,6 +53,7 @@ bool localPlay::init()
 	keyboardListener->onKeyReleased = [this](EventKeyboard::KeyCode keyCode, Event *event)
 	{
 		this->keyStatus[keyCode] = false;
+		hero->stopAllAnimation();
 		log("%d released", keyCode);
 	};
 
@@ -98,19 +99,19 @@ void localPlay::onPress(EventKeyboard::KeyCode keyCode)
 	switch (keyCode)
 	{
 	case EventKeyboard::KeyCode::KEY_W:
-		//playerPos.y += _tileMap->getTileSize().height;
+		hero->setRunAnimation();
 		playerPos.y += movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_A:
-		//playerPos.x -= _tileMap->getTileSize().width;
+		hero->setRunAnimation(1);
 		playerPos.x -= movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_S:
-		//playerPos.y -= _tileMap->getTileSize().height;
+		hero->setRunAnimation();
 		playerPos.y -= movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_D:
-		//playerPos.x += _tileMap->getTileSize().width;
+		hero->setRunAnimation(0);
 		playerPos.x += movSpeed;
 		break;
 	default:
@@ -139,14 +140,15 @@ void localPlay::setPlayerPosition(Vec2 position)
 	}
 	//移动精灵
 	hero->setPosition(position);
-	//滚动地
+	//滚动地图
 	this->setViewpointCenter(hero->getPosition());
 }
 
 Vec2 localPlay::tileCoordFromPosition(Vec2 pos)
 {
 	int x = pos.x / _tileMap->getTileSize().width;
-	int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - pos.y) / _tileMap->getTileSize().height;
+	int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - pos.y) 
+		/ _tileMap->getTileSize().height;
 	return Vec2(x, y);
 }
 

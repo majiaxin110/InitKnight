@@ -16,7 +16,8 @@ public:
 
 	float getMoveSpeed();
 	void initHeroSprite();
-
+	void setRunAnimation(bool runDirection = 0);
+	void stopAllAnimation();
 	CREATE_FUNC(Hero);
 };
 

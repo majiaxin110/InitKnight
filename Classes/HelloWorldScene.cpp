@@ -41,8 +41,8 @@ bool HelloWorld::init()
 	//利用lambda表达式处理单击
 	singleModeButton->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
 		log("Single Local Play Mode");
-		auto localScene = localPlay::createScene();
-		auto reScene = TransitionFade::create(1.0f, localScene);
+		auto locScene = localScene::create();
+		auto reScene = TransitionFade::create(1.0f, locScene);
 		switch (type)
 		{
 		case ui::Widget::TouchEventType::BEGAN:

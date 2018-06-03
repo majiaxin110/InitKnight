@@ -153,7 +153,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\bloodProgress.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="..\Classes\hero.cpp" />
+    <ClCompile Include="..\Classes\localPlayMainLayer.cpp" />
     <ClCompile Include="..\Classes\localPlayScene.cpp" />
+    <ClCompile Include="..\Classes\LocalPlayStatusLayer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,7 +163,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\bloodProgress.h" />
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
     <ClInclude Include="..\Classes\hero.h" />
+    <ClInclude Include="..\Classes\localPlayMainLayer.h" />
     <ClInclude Include="..\Classes\localPlayScene.h" />
+    <ClInclude Include="..\Classes\localPlayStatusLayer.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

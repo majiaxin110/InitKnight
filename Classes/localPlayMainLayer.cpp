@@ -9,9 +9,7 @@ bool localPlay::init()
 	//////////////////////////////
 	// 1. super init first
 	if (!Layer::init())
-	{
 		return false;
-	}
 
 	statusLayer = nullptr;
 
@@ -24,8 +22,8 @@ bool localPlay::init()
 	TMXObjectGroup* group = _tileMap->getObjectGroup("player");
 	ValueMap spawnPoint = group->getObject("startPoint");
 
-	float x = spawnPoint["x"].asFloat();
-	float y = spawnPoint["y"].asFloat();
+	auto x = spawnPoint["x"].asFloat();
+	auto y = spawnPoint["y"].asFloat();
 
 	hero = Hero::create();
 	hero->initHeroSprite();
@@ -33,7 +31,7 @@ bool localPlay::init()
 	addChild(hero, 2, 200);
 
 	setViewpointCenter(hero->getPosition());
-
+	//获取地图的不同层
 	_collidable = _tileMap->getLayer("barriers");
 	_collidable->setVisible(false);
 
@@ -106,6 +104,7 @@ void localPlay::onPress(EventKeyboard::KeyCode keyCode)
 		playerPos.x += movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_J:
+		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/sword.wav");
 		hero->setAttackAnimation();
 		break;
 	default:
@@ -129,7 +128,7 @@ void localPlay::setPlayerPosition(Vec2 position)
 		std::string collision = propValueMap["isCollidable"].asString();
 
 		if (collision == "true") { //碰撞检测成功
-			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("empty.wav");
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/empty.wav");
 			return;
 		}
 	}
@@ -142,7 +141,7 @@ void localPlay::setPlayerPosition(Vec2 position)
 		std::string collect = propValueMap["isCollectable"].asString();
 
 		if (collect == "true") { //摄取检测成功
-			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("empty.wav");
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
 			_heart->removeTileAt(tileCoord);
 			hero->setUpAnimation();
 			statusLayer->addHeroBlood(15.0f);

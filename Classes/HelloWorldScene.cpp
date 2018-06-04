@@ -56,6 +56,9 @@ bool HelloWorld::init()
 	});
 	singleModeButton->setPressedActionEnabled(true);
 	this->addChild(singleModeButton, 1);
+	
+	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/background.mp3",true);
+	CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);//…Ë÷√“Ù¡ø
     return true;
 }
 

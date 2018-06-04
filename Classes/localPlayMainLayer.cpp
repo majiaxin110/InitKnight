@@ -1,20 +1,7 @@
 #include "localPlayMainLayer.h"
 
+
 USING_NS_CC;
-
-/*Scene* localPlay::createScene()
-{
-	auto scene = Scene::create();
-
-	// 'layer' is an autorelease object
-	auto layer = localPlay::create();
-
-	layer->setTag(123);
-	// add layer as a child to scene
-	scene->addChild(layer,0);
-
-	return scene;
-}*/
 
 // on "init" you need to initialize your instance
 bool localPlay::init()
@@ -25,6 +12,8 @@ bool localPlay::init()
 	{
 		return false;
 	}
+
+	statusLayer = nullptr;
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -50,26 +39,20 @@ bool localPlay::init()
 
 	_heart = _tileMap->getLayer("heart");
 	_heart->setVisible(true);
-	/*
-	auto statusLayer = Layer::create();
-	
-	m_pProgressView = new ProgressView();
-	m_pProgressView->setPosition(Vec2(origin.x + 120, origin.y + 600));
-	m_pProgressView->setScale(2.2f);
-	m_pProgressView->setBackgroundTexture("bloodProgress/bloodBack.png");
-	m_pProgressView->setForegroundTexture("bloodProgress/bloodFore.png");
-	m_pProgressView->setTotalProgress(100.0f);
-	m_pProgressView->setCurrentProgress(50.0f);
-	statusLayer->addChild(m_pProgressView, 5);
-	statusLayer->setPosition(hero->getPosition());
-	this->addChild(statusLayer,1);
-	*/
 	
 	this->scheduleUpdate();
 
 	return true;
 }
 
+void localPlay::getStatusLayer(localStatus* tLayer)
+{
+	if (tLayer == nullptr)
+		cocos2d::log("fuck status layer!!");
+	else
+		cocos2d::log("status layer tag %d", tLayer->getTag());
+	statusLayer = tLayer;
+}
 cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
 {
 	if (keyStatus[EventKeyboard::KeyCode::KEY_W])
@@ -162,6 +145,7 @@ void localPlay::setPlayerPosition(Vec2 position)
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("empty.wav");
 			_heart->removeTileAt(tileCoord);
 			hero->setUpAnimation();
+			statusLayer->addHeroBlood(15.0f);
 			return;
 		}
 	}

@@ -42,6 +42,7 @@ bool HelloWorld::init()
 	singleModeButton->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
 		log("Single Local Play Mode");
 		auto locScene = localScene::create();
+		locScene->setTag(579);
 		auto reScene = TransitionFade::create(1.0f, locScene);
 		switch (type)
 		{

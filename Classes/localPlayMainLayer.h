@@ -4,7 +4,8 @@
 #include "cocos2d.h"
 #include "SimpleAudioEngine.h"
 #include "hero.h"
-#include "bloodProgress.h"
+#include "localPlayStatusLayer.h"
+#include "localPlayScene.h"
 #include <map>
 
 class localPlay : public cocos2d::Layer
@@ -15,7 +16,7 @@ private:
 	cocos2d::TMXLayer* _heart;
 	Hero *hero;
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
-	ProgressView *m_pProgressView;
+	localStatus* statusLayer;
 public:
 	// there's no 'id' in cpp, so we recommend returning the class instance Vec2er
 	//static cocos2d::Scene* createScene();
@@ -26,6 +27,7 @@ public:
 
 	virtual void onPress(cocos2d::EventKeyboard::KeyCode keyCode);
 
+	void getStatusLayer(localStatus* tLayer);
 	cocos2d::EventKeyboard::KeyCode whichPressed();
 	void update(float delta) override;
 

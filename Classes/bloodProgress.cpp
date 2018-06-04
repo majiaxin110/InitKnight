@@ -1,60 +1,79 @@
 #include "bloodProgress.h"  
 
 ProgressView::ProgressView()
-	: m_progressBackground(NULL)
-	, m_progressForeground(NULL)
-	, m_totalProgress(0.0f)
-	, m_currentProgress(0.0f)
-	, m_scale(1.0f)
-{
+	: progressBackground(nullptr)
+	, progressForeground(nullptr)
+	, totalBlood(0)
+	, currentBlood(0)
+	, scale(1.0f)
+{}
 
-}
-void ProgressView::setBackgroundTexture(const char *pName)
+void ProgressView::initProgressView(const char* backName,const char* foreName)
 {
-	m_progressBackground = Sprite::create(pName);
-	this->addChild(m_progressBackground);
-}
-
-void ProgressView::setForegroundTexture(const char *pName)
-{
-	m_progressForeground = Sprite::create(pName);
-	m_progressForeground->setAnchorPoint(ccp(0.0f, 0.5f));//设置锚点  
-	m_progressForeground->setPosition(ccp(-m_progressForeground->getContentSize().width * 0.5f, 0));
-	this->addChild(m_progressForeground);
+	progressBackground = Sprite::create(backName);
+	this->addChild(progressBackground);
+	
+	progressForeground = Sprite::create(foreName);
+	progressForeground->setAnchorPoint(Vec2(0, 0.5));
+	//设置位置
+	progressForeground->setPosition(Vec2(-progressForeground->getContentSize().width / 2.0f, 0));
+	this->addChild(progressForeground);
 }
 
 void ProgressView::setTotalProgress(float total)
 {
-	if (m_progressForeground == NULL) { return; }
-	m_scale = m_progressForeground->getContentSize().width / total;
-	m_totalProgress = total;
+	if (progressForeground == nullptr) 
+		return;
+	scale = progressForeground->getContentSize().width / total;
+	totalBlood = total;
 }
 
 void ProgressView::setCurrentProgress(float progress)
 {
-	if (m_progressForeground == NULL) { return; }
-	if (progress < 0.0f) { progress = 0.0f; }
-	if (progress > m_totalProgress) { progress = m_totalProgress; }
-	m_currentProgress = progress;
-	float rectWidth = progress * m_scale;
-	const CCPoint from = m_progressForeground->getTextureRect().origin;
-	const CCRect rect = CCRectMake(from.x, from.y, rectWidth, m_progressForeground->getContentSize().height);
+	if (progressForeground == nullptr)
+		return;
+	if (progress > totalBlood) 
+		progress = totalBlood;
+	currentBlood = progress;
+	//利用Rect显示一部分
+	float rectWidth = progress * scale;
+	const Vec2 pos = progressForeground->getTextureRect().origin;
+	const Rect rect = Rect(pos.x, pos.y, rectWidth, progressForeground->getContentSize().height);
 	setForegroundTextureRect(rect);
 }
 
-void ProgressView::setForegroundTextureRect(const CCRect &rect)
+void ProgressView::setForegroundTextureRect(const Rect &rect)
 {
-	m_progressForeground->setTextureRect(rect);
+	progressForeground->setTextureRect(rect);
 }
-
-
 
 float ProgressView::getCurrentProgress() const
 {
-	return m_currentProgress;
+	return currentBlood;
 }
 
 float ProgressView::getTotalProgress() const
 {
-	return m_totalProgress;
+	return totalBlood;
+}
+
+bool ProgressView::cutBlood(float cutAmount)
+{
+	if (currentBlood - cutAmount < 0)
+	{
+		currentBlood = 0;
+		setCurrentProgress(currentBlood);
+		return true;
+	}
+	else
+	{
+		currentBlood -= cutAmount;
+		setCurrentProgress(currentBlood);
+		return false;
+	}
+}
+
+void ProgressView::addBlood(float amount)
+{
+	setCurrentProgress(currentBlood + amount);
 }

@@ -10,10 +10,7 @@ public:
 	ProgressView();
 
 public:
-	//设置血条背景  
-	void setBackgroundTexture(const char *pName);
-	//设置血条前景  
-	void setForegroundTexture(const char *pName);
+	void initProgressView(const char* backName,const char* foreName);//创建精灵，初始化
 	//设置总血量  
 	void setTotalProgress(float total);
 	//设置当前血量  
@@ -22,17 +19,20 @@ public:
 	float getCurrentProgress() const;
 	//得到总血量  
 	float getTotalProgress() const;
-
+	//减少血量,返回是否角色死亡
+	bool cutBlood(float cutAmount);
+	//增加血量
+	void addBlood(float addAmount);
 private:
 	//设置前景血条显示的长度  
 	void setForegroundTextureRect(const Rect &rect);
 
 private:
-	Sprite *m_progressBackground;//背景血条  
-	Sprite *m_progressForeground;//前景血条  
-	float m_totalProgress;//总血量  
-	float m_currentProgress;//当前血量  
-	float m_scale;//放大倍数  
+	Sprite *progressBackground;//背景
+	Sprite *progressForeground;//前景
+	float totalBlood;//总血量  
+	float currentBlood;//当前血量  
+	float scale;//放大倍数  
 };
 
 #endif  

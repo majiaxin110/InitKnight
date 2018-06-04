@@ -11,11 +11,12 @@ bool localScene::init()
 {
 	log("local scene init");
 	auto mainLayer = localPlay::create();
-
+	mainLayer->setName("main");
 	auto statusLayer = localStatus::create();
-	log("main layer position:%f  %f", mainLayer->getPosition().x, mainLayer->getPosition().y);
-	//statusLayer->setPosition(mainLayer->getPosition().x, mainLayer->getPosition().y);
-	
+	statusLayer->setName("status");
+	statusLayer->setTag(123);
+	mainLayer->getStatusLayer(statusLayer);
+
 	this->addChild(mainLayer,1);
 	this->addChild(statusLayer,20);
 	

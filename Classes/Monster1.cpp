@@ -44,6 +44,36 @@ void Monster1::startAnimation()  //开始播放动画
 
 }
 
+void Monster1::patrol()  //常态怪物巡逻
+{
+	
+	//this->SetAnimation("monster_run", 6, MonsterDirecton);//播放动画  
+	/*CCMoveBy *moveby1;
+	if (monster1Direction == true)
+		moveby1 = CCMoveBy::create(2, ccp(-100, 0));
+	else
+		moveby1 = CCMoveBy::create(2, ccp(100, 0));
+	//创建回调动作，巡逻路线完后  
+	CCCallFunc* callFunc = CCCallFunc::create(this, callfunc_selector(Monster::StopAnimation));
+	//创建连续动作  
+	CCActionInterval* xunluo = CCSequence::create(moveby1, callFunc, NULL);
+	this->runAction(xunluo);*/
+	
+	
+	//Action* action1=monster1Sprite->runAction(MoveBy::create(4, Vec2(-200, 0)));
+	//Action* action2=monster1Sprite->runAction(MoveBy::create(4, Vec2(0, 200)));
+	
+		auto action = Sequence::create(MoveBy::create(4, Vec2(-200, 0)), MoveBy::create(4, Vec2(200, 0)), NULL);
+		
+		auto repeat = RepeatForever::create(action);
+		runAction(repeat);
+		
+		
+	
+
+    
+}
+
 float Monster1::getMoveSpeed()
 {
 	return moveSpeed;

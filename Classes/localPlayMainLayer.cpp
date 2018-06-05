@@ -3,6 +3,8 @@
 
 USING_NS_CC;
 
+const int tileSize = 32;//瓦片大小
+
 // on "init" you need to initialize your instance
 bool localPlay::init()
 {
@@ -25,6 +27,7 @@ bool localPlay::init()
 	auto x = spawnPoint["x"].asFloat();
 	auto y = spawnPoint["y"].asFloat();
 
+
 	hero = Hero::create();
 	hero->initHeroSprite();
 	hero->setPosition(Vec2(x, y));
@@ -32,8 +35,10 @@ bool localPlay::init()
 
 	monster1 = Monster1::create();
 	monster1->initMonster1Sprite();
-	monster1->setPosition(Vec2(x, y));
-	addChild(monster1, 10, 250);
+	monster1->setPosition(Vec2(x+tileSize*2, y+tileSize*2));
+	monster1->startAnimation();
+	this->addChild(monster1,2);
+	
 
 	setViewpointCenter(hero->getPosition());
 	//获取地图的不同层

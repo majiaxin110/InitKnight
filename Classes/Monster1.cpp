@@ -1,5 +1,6 @@
 #include "Monster1.h"
 #include "localPlayScene.h"
+#include "cocos2d.h"
 
 
 USING_NS_CC;
@@ -19,13 +20,36 @@ Monster1::Monster1()
 void Monster1::initMonster1Sprite()  //创建怪物
 {
 	this->monster1Sprite = Sprite::create("carman1.png");
+	monster1Sprite->setScale(0.6, 0.6);
 	this->addChild(monster1Sprite);
+}
+
+void Monster1::startAnimation()  //开始播放动画
+{
+	Animation *animation = Animation::create();
+	for (int i = 1; i <= 5; i++)
+	{
+		__String *frameName = __String::createWithFormat("carMan/carman%d.png", i);
+		//log("frameName=%s", frameName->getCString());
+		//SpriteFrame *spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName->getCString());
+		animation->addSpriteFrameWithFile(frameName->getCString());
+	}
+
+	animation->setDelayPerUnit(0.15f);  //设置两个帧播放时间;
+	animation->setRestoreOriginalFrame(true);//动画执行后还原初始状态
+
+	Animate *action = Animate::create(animation);
+	monster1Sprite->runAction(RepeatForever::create(action));
+	//动画结束
+
 }
 
 float Monster1::getMoveSpeed()
 {
 	return moveSpeed;
 }
+
+
 
 /*void Monster::setRunAnimation(bool runDriection)
 {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -156,7 +156,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\localPlayMainLayer.cpp" />
     <ClCompile Include="..\Classes\localPlayScene.cpp" />
     <ClCompile Include="..\Classes\LocalPlayStatusLayer.cpp" />
+    <ClCompile Include="..\Classes\Monster1.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="useless.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
@@ -166,7 +168,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\localPlayMainLayer.h" />
     <ClInclude Include="..\Classes\localPlayScene.h" />
     <ClInclude Include="..\Classes\localPlayStatusLayer.h" />
+    <ClInclude Include="..\Classes\Monster1.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="useless.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cocos2d\cocos\2d\libcocos2d.vcxproj">
@@ -182,6 +186,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc" />
+    <ResourceCompile Include="InitKnight.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

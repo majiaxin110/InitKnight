@@ -5,7 +5,7 @@ class Monster1 :public cocos2d::Node
 {
 private:
 	cocos2d::Sprite* monster1Sprite;
-	float moveSpeed;//可移动的速度
+	float moveSpeed;//移动的速度
 	int attackPower;//攻击值
 	int blood;//血量
 public:
@@ -17,6 +17,7 @@ public:
 
 	float getMoveSpeed();
 	void initMonster1Sprite();
+	void startAnimation();
 	/*void setRunAnimation(bool runDirection = 0);
 	void setAttackAnimation();
 	void setUpAnimation();

@@ -36,6 +36,10 @@
     <ClCompile Include="..\Classes\LocalPlayStatusLayer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="useless.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Monster1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -62,10 +66,15 @@
     <ClInclude Include="..\Classes\localPlayStatusLayer.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="useless.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Monster1.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
       <Filter>resource</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="InitKnight.rc" />
   </ItemGroup>
 </Project>

@@ -70,9 +70,10 @@ void  Monster::StopAnimation()
 									  //恢复精灵原来的初始化贴图   
 	this->removeChild(m_MonsterSprite, TRUE);//把原来的精灵删除掉  
 	m_MonsterSprite = CCSprite::create(Monster_name);//恢复精灵原来的贴图样子  
-	m_MonsterSprite->setFlipX(!MonsterDirecton);  //增加！
+	m_MonsterSprite->setFlipX(MonsterDirecton);  //增加！
 	this->addChild(m_MonsterSprite);
 	IsRunning = false;
+	MonsterDirecton = !MonsterDirecton;  //每次停下都会重置方向
 }
 void  Monster::AttackAnimation(const char *name_each, const unsigned int num, bool run_directon)
 {
@@ -188,7 +189,10 @@ void  Monster::MonsterSeeRun()
 	this->SetAnimation("monster2walk", 4, MonsterDirecton);//播放动画  
 	CCMoveBy *moveby1;
 	if (MonsterDirecton == true)
+	{
 		moveby1 = CCMoveBy::create(4, ccp(-100, 0));
+		
+	}
 	else
 		moveby1 = CCMoveBy::create(4, ccp(100, 0));
 	//创建回调动作，巡逻路线完后  

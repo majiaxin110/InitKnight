@@ -14,13 +14,14 @@ private:
 	cocos2d::TMXTiledMap* _tileMap;
 	cocos2d::TMXLayer* _collidable;
 	cocos2d::TMXLayer* _heart;
+	cocos2d::TMXLayer* _npc;
 	Hero *hero;
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
-	localStatus* statusLayer;
+	
 public:
 	// there's no 'id' in cpp, so we recommend returning the class instance Vec2er
 	//static cocos2d::Scene* createScene();
-
+	localStatus* statusLayer;
 	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
 	virtual bool init();
 	virtual void onEnter();

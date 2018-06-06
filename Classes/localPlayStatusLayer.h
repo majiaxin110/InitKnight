@@ -12,5 +12,11 @@ public:
 
 	bool cutHeroBlood(float amount);
 	void addHeroBlood(float amount);
+
+	//与NPC对话的图形
+	void showOldNPCDialog();
+	void removeOldNPCDialog();
+	void showPaojieDialog();
+
 	CREATE_FUNC(localStatus);
 };  

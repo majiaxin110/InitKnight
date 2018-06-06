@@ -1,4 +1,5 @@
 #include "localPlayStatusLayer.h"
+#include "ui/CocosGUI.h"
 
 bool localStatus::init()
 {
@@ -36,4 +37,17 @@ bool localStatus::cutHeroBlood(float amount)
 void localStatus::addHeroBlood(float amount)
 {
 	return cBloodProgress->addBlood(amount);
+}
+
+void localStatus::showOldNPCDialog()
+{
+	auto image = ui::ImageView::create("NPC1.png");
+	image->setPosition(Vec2(480, 320));
+	image->setName("NPC1");
+	this->addChild(image,2);
+}
+
+void localStatus::removeOldNPCDialog()
+{
+	this->removeChildByName("NPC1");
 }

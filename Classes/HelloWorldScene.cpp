@@ -1,6 +1,7 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 #include "localPlayScene.h"
+#include "ui/CocosGUI.h"
 
 USING_NS_CC;
 
@@ -56,9 +57,37 @@ bool HelloWorld::init()
 	});
 	singleModeButton->setPressedActionEnabled(true);
 	this->addChild(singleModeButton, 1);
+
 	
-	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/background.mp3",true);
+
+	//背景音乐开关
+	auto *chnStrings = Dictionary::createWithContentsOfFile("string.xml");
+	const char *strMusic = ((__String*)chnStrings->objectForKey("music"))->getCString();
+	auto musicLabel = Label::createWithTTF(strMusic, "fonts/Deng.ttf",20);
+	musicLabel->setPosition(Vec2(origin.x + 60, origin.y + 120));
+	this->addChild(musicLabel, 1);
+
+	auto musicCheck = ui::CheckBox::create("unCheckBox.png","CheckBox.png");
+	musicCheck->setPosition(Vec2(musicLabel->getPosition().x + 60, musicLabel->getPosition().y));
+	musicCheck->addEventListener([](Ref* pSender, ui::CheckBox::EventType type) {
+		switch (type)
+		{
+		case ui::CheckBox::EventType::SELECTED:
+			CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/background.mp3", true);
+			CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);//设置音量
+			break;
+		case ui::CheckBox::EventType::UNSELECTED:
+			CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+			break;
+		default:
+			break;
+		}
+	});
+	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/background.mp3", true);
 	CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);//设置音量
+	musicCheck->setSelected(true);
+	this->addChild(musicCheck, 1);
+	
     return true;
 }
 

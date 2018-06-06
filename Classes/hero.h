@@ -18,6 +18,7 @@ public:
 	Hero();
 
 	float getMoveSpeed();
+	void setMoveSpeed(float currentSpeed);
 	void initHeroSprite();
 	void setRunAnimation(bool runDirection = 0);
 	void setAttackAnimation();

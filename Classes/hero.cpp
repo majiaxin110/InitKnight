@@ -104,3 +104,9 @@ void Hero::stopAllAnimation()
 	this->addChild(cHeroSprite);
 	isMoving = false;
 }
+
+void Hero::setMoveSpeed(float currentSpeed)
+{
+	moveSpeed = currentSpeed;
+}
+

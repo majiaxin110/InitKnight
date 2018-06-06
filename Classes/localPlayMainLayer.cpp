@@ -38,6 +38,8 @@ bool localPlay::init()
 	_heart = _tileMap->getLayer("heart");
 	_heart->setVisible(true);
 	
+	_npc = _tileMap->getLayer("npc");
+	_npc->setVisible(true);
 	this->scheduleUpdate();
 
 	return true;
@@ -148,6 +150,44 @@ void localPlay::setPlayerPosition(Vec2 position)
 			return;
 		}
 	}
+	tileGid = _npc->getTileGIDAt(tileCoord);
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string talk = propValueMap["isTalktoOld"].asString();
+
+		if (talk == "true") { //npc对话检测成功
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
+			_npc->removeTileAt(tileCoord);
+			statusLayer->showOldNPCDialog();
+			auto keyboardListenerTalkOld = EventListenerKeyboard::create();
+			//使用Lambda表达式处理npc对话键盘事件
+			keyboardListenerTalkOld->onKeyPressed = [this, keyboardListenerTalkOld](EventKeyboard::KeyCode keyCode, Event* event)
+			{
+				switch (keyCode)
+				{
+				case EventKeyboard::KeyCode::KEY_Y:
+					this->statusLayer->addHeroBlood(30);
+					//移除键盘监听
+					Director::getInstance()->getEventDispatcher()->removeEventListener(keyboardListenerTalkOld);
+					this->statusLayer->removeOldNPCDialog();
+					break;
+				case EventKeyboard::KeyCode::KEY_X:
+					hero->setMoveSpeed(hero->getMoveSpeed() * 2);
+					Director::getInstance()->getEventDispatcher()->removeEventListener(keyboardListenerTalkOld);
+					this->statusLayer->removeOldNPCDialog();
+					break;
+				default:
+					break;
+				}
+			};
+			EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
+			eventDispatcher->addEventListenerWithFixedPriority(keyboardListenerTalkOld, 1);
+			return;
+		}
+	}
 	//移动精灵
 	hero->setPosition(position);
 	//滚动地图
@@ -206,6 +246,6 @@ void localPlay::onEnter()
 	};
 
 	EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
-	eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+	eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, 2);
 
 }

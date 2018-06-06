@@ -39,6 +39,12 @@ bool localPlay::init()
 	monster1->startAnimation();
 	this->addChild(monster1,2);
 	monster1->patrol();
+
+	monster2 = Monster::create();
+	monster2->InitMonsterSprite("monster2walk1.png");
+	//monster1->InitMonsterSprite("monster.png","xue_back.png","xue_fore.png");  
+	monster2->setPosition(Vec2((26 + 2)*tileSize, (41 + 2)*tileSize));
+	this->addChild(monster2, 1);
 	
 
 	setViewpointCenter(hero->getPosition());

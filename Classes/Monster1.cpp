@@ -63,14 +63,16 @@ void Monster1::patrol()  //³£Ì¬¹ÖÎïÑ²Âß
 	//Action* action1=monster1Sprite->runAction(MoveBy::create(4, Vec2(-200, 0)));
 	//Action* action2=monster1Sprite->runAction(MoveBy::create(4, Vec2(0, 200)));
 	
-		auto action = Sequence::create(MoveBy::create(4, Vec2(-200, 0)), MoveBy::create(4, Vec2(200, 0)), NULL);
+		//auto action = Sequence::create(MoveBy::create(4, Vec2(-200, 0)), MoveBy::create(4, Vec2(200, 0)), nullptr);
+		//auto action2 = monster1Sprite->runAction(FlipX::create(false));
+		//auto action3= Sequence::create(action, action2, nullptr);
 		
-		auto repeat = RepeatForever::create(action);
-		runAction(repeat);
-		
-		
-	
-
+			/*auto repeat = Repeat::create(action, 1);
+			runAction(repeat);
+			monster1Sprite->setFlippedX(true);*/
+			auto action = Sequence::create(MoveBy::create(4, Vec2(-200, 0)), MoveBy::create(4, Vec2(200, 0)), NULL);
+			auto repeat = RepeatForever::create(action);
+			runAction(repeat);
     
 }
 

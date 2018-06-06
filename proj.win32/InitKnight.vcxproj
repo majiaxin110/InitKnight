@@ -156,6 +156,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClCompile Include="..\Classes\localPlayMainLayer.cpp" />
     <ClCompile Include="..\Classes\localPlayScene.cpp" />
     <ClCompile Include="..\Classes\LocalPlayStatusLayer.cpp" />
+    <ClCompile Include="..\Classes\Monster.cpp" />
     <ClCompile Include="..\Classes\Monster1.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="useless.cpp" />
@@ -168,6 +169,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\Classes\localPlayMainLayer.h" />
     <ClInclude Include="..\Classes\localPlayScene.h" />
     <ClInclude Include="..\Classes\localPlayStatusLayer.h" />
+    <ClInclude Include="..\Classes\Monster.h" />
     <ClInclude Include="..\Classes\Monster1.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="useless.h" />

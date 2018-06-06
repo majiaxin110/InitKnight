@@ -40,6 +40,7 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Monster1.cpp" />
+    <ClCompile Include="..\Classes\Monster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -70,6 +71,7 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Monster1.h" />
+    <ClInclude Include="..\Classes\Monster.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

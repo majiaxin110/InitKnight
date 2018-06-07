@@ -1,5 +1,6 @@
 #include "Monster1.h"
 #include "localPlayScene.h"
+#include "cocos2d.h"
 
 
 USING_NS_CC;
@@ -19,13 +20,68 @@ Monster1::Monster1()
 void Monster1::initMonster1Sprite()  //创建怪物
 {
 	this->monster1Sprite = Sprite::create("carman1.png");
+	monster1Sprite->setScale(0.6, 0.6);
 	this->addChild(monster1Sprite);
+}
+
+void Monster1::startAnimation()  //开始播放动画
+{
+	Animation *animation = Animation::create();
+	for (int i = 1; i <= 5; i++)
+	{
+		__String *frameName = __String::createWithFormat("carMan/carman%d.png", i);
+		//log("frameName=%s", frameName->getCString());
+		//SpriteFrame *spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName->getCString());
+		animation->addSpriteFrameWithFile(frameName->getCString());
+	}
+
+	animation->setDelayPerUnit(0.15f);  //设置两个帧播放时间;
+	animation->setRestoreOriginalFrame(true);//动画执行后还原初始状态
+
+	Animate *action = Animate::create(animation);
+	monster1Sprite->runAction(RepeatForever::create(action));
+	//动画结束
+
+}
+
+void Monster1::patrol()  //常态怪物巡逻
+{
+	
+	//this->SetAnimation("monster_run", 6, MonsterDirecton);//播放动画  
+	/*CCMoveBy *moveby1;
+	if (monster1Direction == true)
+		moveby1 = CCMoveBy::create(2, ccp(-100, 0));
+	else
+		moveby1 = CCMoveBy::create(2, ccp(100, 0));
+	//创建回调动作，巡逻路线完后  
+	CCCallFunc* callFunc = CCCallFunc::create(this, callfunc_selector(Monster::StopAnimation));
+	//创建连续动作  
+	CCActionInterval* xunluo = CCSequence::create(moveby1, callFunc, NULL);
+	this->runAction(xunluo);*/
+	
+	
+	//Action* action1=monster1Sprite->runAction(MoveBy::create(4, Vec2(-200, 0)));
+	//Action* action2=monster1Sprite->runAction(MoveBy::create(4, Vec2(0, 200)));
+	
+		//auto action = Sequence::create(MoveBy::create(4, Vec2(-200, 0)), MoveBy::create(4, Vec2(200, 0)), nullptr);
+		//auto action2 = monster1Sprite->runAction(FlipX::create(false));
+		//auto action3= Sequence::create(action, action2, nullptr);
+		
+			/*auto repeat = Repeat::create(action, 1);
+			runAction(repeat);
+			monster1Sprite->setFlippedX(true);*/
+			auto action = Sequence::create(MoveBy::create(4, Vec2(-200, 0)), MoveBy::create(4, Vec2(200, 0)), NULL);
+			auto repeat = RepeatForever::create(action);
+			runAction(repeat);
+    
 }
 
 float Monster1::getMoveSpeed()
 {
 	return moveSpeed;
 }
+
+
 
 /*void Monster::setRunAnimation(bool runDriection)
 {

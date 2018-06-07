@@ -3,6 +3,8 @@
 
 USING_NS_CC;
 
+const int tileSize = 32;//瓦片大小
+
 // on "init" you need to initialize your instance
 bool localPlay::init()
 {
@@ -25,6 +27,7 @@ bool localPlay::init()
 	auto x = spawnPoint["x"].asFloat();
 	auto y = spawnPoint["y"].asFloat();
 
+
 	hero = Hero::create();
 	hero->initHeroSprite();
 	hero->setPosition(Vec2(x, y));
@@ -32,8 +35,21 @@ bool localPlay::init()
 
 	monster1 = Monster1::create();
 	monster1->initMonster1Sprite();
-	monster1->setPosition(Vec2(x, y));
-	addChild(monster1, 10, 250);
+	monster1->setPosition(Vec2((26+2)*tileSize, (45+2)*tileSize));
+	monster1->startAnimation();
+	this->addChild(monster1,2);
+	monster1->patrol();
+
+	monster2 = Monster::create();
+	monster2->InitMonsterSprite("monster2walk1.png");
+	//monster1->InitMonsterSprite("monster.png","xue_back.png","xue_fore.png");  
+	monster2->setPosition(Vec2((18 + 2)*tileSize, (38 + 2)*tileSize));
+	this->addChild(monster2, 1);
+	monster2->StartListen(hero, _tileMap);
+
+	//mymap->addChild(monster1);//将怪物添加到地图中，这样怪物才能随地图移动  
+	//monster2->StartListen(hero, mymap);//非常重要，这是这一讲用到的  
+	
 
 	setViewpointCenter(hero->getPosition());
 	//获取地图的不同层

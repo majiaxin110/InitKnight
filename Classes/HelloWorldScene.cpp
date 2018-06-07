@@ -84,7 +84,7 @@ bool HelloWorld::init()
 		}
 	});
 	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/background.mp3", true);
-	CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.5);//设置音量
+	CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.3f);//设置音量
 	musicCheck->setSelected(true);
 	this->addChild(musicCheck, 1);
 	

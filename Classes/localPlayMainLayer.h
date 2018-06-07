@@ -32,6 +32,7 @@ public:
 	cocos2d::EventKeyboard::KeyCode whichPressed();
 	void update(float delta) override;
 
+	bool detectPlayerPosition(cocos2d::Vec2 position);//检测Hero位置与地图某些地方的重合问题，返回是否可移动
 	void setPlayerPosition(cocos2d::Vec2 position);
 	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);
 	void setViewpointCenter(cocos2d::Vec2 position);

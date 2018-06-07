@@ -115,7 +115,7 @@ void localPlay::onPress(EventKeyboard::KeyCode keyCode)
 	this->setPlayerPosition(playerPos);
 }
 
-void localPlay::setPlayerPosition(Vec2 position)
+bool localPlay::detectPlayerPosition(Vec2 position)
 {
 	//从像素点坐标转化为瓦片坐标
 	Vec2 tileCoord = this->tileCoordFromPosition(position);
@@ -131,7 +131,7 @@ void localPlay::setPlayerPosition(Vec2 position)
 
 		if (collision == "true") { //碰撞检测成功
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/empty.wav");
-			return;
+			return false;
 		}
 	}
 	tileGid = _heart->getTileGIDAt(tileCoord);
@@ -147,9 +147,10 @@ void localPlay::setPlayerPosition(Vec2 position)
 			_heart->removeTileAt(tileCoord);
 			hero->setUpAnimation();
 			statusLayer->addHeroBlood(15.0f);
-			return;
+			return false;
 		}
 	}
+
 	tileGid = _npc->getTileGIDAt(tileCoord);
 	if (tileGid > 0)
 	{
@@ -158,7 +159,7 @@ void localPlay::setPlayerPosition(Vec2 position)
 
 		std::string talk = propValueMap["isTalktoOld"].asString();
 
-		if (talk == "true") { //npc对话检测成功
+		if (talk == "true") { //老者npc对话检测成功
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
 			_npc->removeTileAt(tileCoord);
 			statusLayer->showOldNPCDialog();
@@ -170,7 +171,7 @@ void localPlay::setPlayerPosition(Vec2 position)
 				{
 				case EventKeyboard::KeyCode::KEY_Y:
 					this->statusLayer->addHeroBlood(30);
-					//移除键盘监听
+					//键盘监听
 					Director::getInstance()->getEventDispatcher()->removeEventListener(keyboardListenerTalkOld);
 					this->statusLayer->removeOldNPCDialog();
 					break;
@@ -185,13 +186,52 @@ void localPlay::setPlayerPosition(Vec2 position)
 			};
 			EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
 			eventDispatcher->addEventListenerWithFixedPriority(keyboardListenerTalkOld, 1);
-			return;
+			return false;
+		}
+
+		talk = propValueMap["isTalktoPao"].asString();
+
+		if (talk == "true") { //御坂美琴npc对话检测成功
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
+			_npc->removeTileAt(tileCoord);
+			statusLayer->showPaojieDialog();
+			auto keyboardListenerTalkOld = EventListenerKeyboard::create();
+			//使用Lambda表达式处理npc对话键盘事件
+			keyboardListenerTalkOld->onKeyPressed = [this, keyboardListenerTalkOld](EventKeyboard::KeyCode keyCode, Event* event)
+			{
+				switch (keyCode)
+				{
+				case EventKeyboard::KeyCode::KEY_Y:
+					//获取道具
+					//键盘监听
+					Director::getInstance()->getEventDispatcher()->removeEventListener(keyboardListenerTalkOld);
+					this->statusLayer->removePaoNPCDialog();
+					break;
+				case EventKeyboard::KeyCode::KEY_X:
+					this->statusLayer->cutHeroBlood(40);
+					Director::getInstance()->getEventDispatcher()->removeEventListener(keyboardListenerTalkOld);
+					this->statusLayer->removePaoNPCDialog();
+					break;
+				default:
+					break;
+				}
+			};
+			EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
+			eventDispatcher->addEventListenerWithFixedPriority(keyboardListenerTalkOld, 1);
+			return false;
 		}
 	}
-	//移动精灵
-	hero->setPosition(position);
-	//滚动地图
-	this->setViewpointCenter(hero->getPosition());
+	return true;
+}
+void localPlay::setPlayerPosition(Vec2 position)
+{
+	if (detectPlayerPosition(position))
+	{
+		//移动精灵
+		hero->setPosition(position);
+		//滚动地图
+		this->setViewpointCenter(hero->getPosition());
+	}
 }
 
 Vec2 localPlay::tileCoordFromPosition(Vec2 pos)

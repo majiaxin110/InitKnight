@@ -1,5 +1,6 @@
 #include "localPlayStatusLayer.h"
 #include "ui/CocosGUI.h"
+#include "SimpleAudioEngine.h"
 
 bool localStatus::init()
 {
@@ -31,6 +32,7 @@ bool localStatus::init()
 
 bool localStatus::cutHeroBlood(float amount)
 {
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHurt.mp3");
 	return cBloodProgress->cutBlood(amount);
 }
 
@@ -47,7 +49,19 @@ void localStatus::showOldNPCDialog()
 	this->addChild(image,2);
 }
 
+void localStatus::showPaojieDialog()
+{
+	auto image = ui::ImageView::create("NPC2.png");
+	image->setPosition(Vec2(480, 320));
+	image->setName("NPC2");
+	this->addChild(image, 2);
+}
 void localStatus::removeOldNPCDialog()
 {
 	this->removeChildByName("NPC1");
+}
+
+void localStatus::removePaoNPCDialog()
+{
+	this->removeChildByName("NPC2");
 }

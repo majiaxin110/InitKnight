@@ -8,7 +8,6 @@ Hero::Hero()
 	isMoving = false;
 	isAttacking = false;
 	attackPower = 1;
-	blood = 100;
 	heroDirection = 0;
 	cHeroSprite = nullptr;
 	moveSpeed = 1.5f;

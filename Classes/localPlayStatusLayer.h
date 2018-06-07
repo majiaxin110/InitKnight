@@ -17,6 +17,7 @@ public:
 	void showOldNPCDialog();
 	void removeOldNPCDialog();
 	void showPaojieDialog();
+	void removePaoNPCDialog();
 
 	CREATE_FUNC(localStatus);
 };  

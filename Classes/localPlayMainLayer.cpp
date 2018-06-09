@@ -40,6 +40,7 @@ bool localPlay::init()
 	this->addChild(monster1,2);
 	monster1->patrol();
 
+<<<<<<< HEAD
 	monster2 = Monster::create();
 	//monster2->InitMonsterSprite("monster2walk1.png");
 	monster2->InitMonsterSprite("monster2walk1.png","bloodBack.png","bloodFore.png");  
@@ -48,6 +49,16 @@ bool localPlay::init()
 	monster2->StartListen(hero, _tileMap);
 
 	//mymap->addChild(monster1);//将怪物添加到地图中，这样怪物才能随地图移动  
+=======
+	monster2 = Monster::create();
+	//monster2->InitMonsterSprite("monster2walk1.png");
+	monster2->InitMonsterSprite("monster2walk1.png","bloodBack.png","bloodFore.png");  
+	monster2->setPosition(Vec2((18 + 2)*tileSize, (38 + 2)*tileSize));
+	this->addChild(monster2, 1);
+	monster2->StartListen(hero, _tileMap);
+
+	//mymap->addChild(monster1);//将怪物添加到地图中，这样怪物才能随地图移动  
+>>>>>>> 213178e3647f347b5db6f129e16925cc31aabdf3
 	//monster2->StartListen(hero, mymap);//非常重要，这是这一讲用到的  
 	
 

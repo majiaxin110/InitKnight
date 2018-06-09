@@ -19,10 +19,9 @@ private:
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
 	
 public:
-	// there's no 'id' in cpp, so we recommend returning the class instance Vec2er
 	//static cocos2d::Scene* createScene();
 	localStatus* statusLayer;
-	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
+
 	virtual bool init();
 	virtual void onEnter();
 
@@ -36,6 +35,9 @@ public:
 	void setPlayerPosition(cocos2d::Vec2 position);
 	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);
 	void setViewpointCenter(cocos2d::Vec2 position);
+
+	void changeToLoseScene();
+	void changeToWinScene();
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(localPlay);

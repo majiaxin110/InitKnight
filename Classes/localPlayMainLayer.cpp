@@ -1,5 +1,5 @@
 #include "localPlayMainLayer.h"
-
+#include "loseScene.h"
 
 USING_NS_CC;
 
@@ -147,6 +147,7 @@ bool localPlay::detectPlayerPosition(Vec2 position)
 			_heart->removeTileAt(tileCoord);
 			hero->setUpAnimation();
 			statusLayer->addHeroBlood(15.0f);
+			statusLayer->addPoint(30);
 			return false;
 		}
 	}
@@ -288,4 +289,18 @@ void localPlay::onEnter()
 	EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
 	eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, 2);
 
+}
+
+void localPlay::changeToLoseScene()
+{
+	auto loseScene = LoseScene::create();
+	auto reScene = TransitionFade::create(1.0f, loseScene);
+	Director::getInstance()->replaceScene(reScene);
+}
+
+void localPlay::changeToWinScene()
+{
+	auto winScene = LoseScene::create();
+	auto reScene = TransitionFade::create(1.0f, winScene);
+	Director::getInstance()->replaceScene(reScene);
 }

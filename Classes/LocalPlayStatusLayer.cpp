@@ -27,6 +27,15 @@ bool localStatus::init()
 	cBloodProgress->setCurrentProgress(50.0f);
 	this->addChild(cBloodProgress, 101);
 
+	auto pointTip = ui::ImageView::create("pointTip.png");
+	pointTip->setPosition(Vec2(visibleSize.width - 120, visibleSize.height - 55));
+	this->addChild(pointTip, 101);
+
+	playerPoint = 0;
+	pointLabel = Label::createWithTTF("0","fonts/Deng.ttf", 40.0f);
+	pointLabel->setPosition(Vec2(pointTip->getPosition().x + 80, pointTip->getPosition().y));
+	this->addChild(pointLabel, 101);
+
 	return true;
 }
 
@@ -64,4 +73,10 @@ void localStatus::removeOldNPCDialog()
 void localStatus::removePaoNPCDialog()
 {
 	this->removeChildByName("NPC2");
+}
+
+void localStatus::addPoint(int add)
+{
+	playerPoint += add;
+	pointLabel->setString(std::to_string(playerPoint));
 }

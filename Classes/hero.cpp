@@ -24,6 +24,14 @@ float Hero::getMoveSpeed()
 	return moveSpeed;
 }
 
+void Hero::changeAttackMode()
+{
+	attackMode = !attackMode;
+	//更换贴图
+	this->removeChild(cHeroSprite, TRUE);//把原来的精灵删除掉  
+
+}
+
 void Hero::setRunAnimation(bool runDirection)
 {
 	//翻转吧朋友

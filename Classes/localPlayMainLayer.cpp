@@ -41,8 +41,8 @@ bool localPlay::init()
 	monster1->patrol();
 
 	monster2 = Monster::create();
-	monster2->InitMonsterSprite("monster2walk1.png");
-	//monster1->InitMonsterSprite("monster.png","xue_back.png","xue_fore.png");  
+	//monster2->InitMonsterSprite("monster2walk1.png");
+	monster2->InitMonsterSprite("monster2walk1.png","bloodBack.png","bloodFore.png");  
 	monster2->setPosition(Vec2((18 + 2)*tileSize, (38 + 2)*tileSize));
 	this->addChild(monster2, 1);
 	monster2->StartListen(hero, _tileMap);
@@ -71,6 +71,7 @@ void localPlay::getStatusLayer(localStatus* tLayer)
 	else
 		cocos2d::log("status layer tag %d", tLayer->getTag());
 	statusLayer = tLayer;
+	monster2->getBloodStatus(statusLayer);//»√π÷ŒÔΩ” ‹statuslayer
 }
 cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
 {

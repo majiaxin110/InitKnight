@@ -1,5 +1,7 @@
 #pragma once
-#include "cocos2d.h"  
+#include "cocos2d.h" 
+#include "LocalPlayStatusLayer.h"
+#include "bloodProgress.h"
 
 USING_NS_CC;
 
@@ -11,7 +13,7 @@ public:
 	//根据图片名创建怪物，不带血条  
 	void InitMonsterSprite(char *name);
 	//带血条的怪物   
-	//void InitMonsterSprite(char *name, char *xue_back, char* xue_fore);
+	void InitMonsterSprite(char *name, char *xue_back, char* xue_fore);
 	//设置动画,num为图片数目，run_directon为精灵脸朝向，false朝右,name_each为name_png中每一小张图片的公共名称部分  
 	void SetAnimation(const char *name_each, const unsigned int num, bool run_directon);
 	//停止动画  
@@ -37,21 +39,24 @@ public:
 
 	//怪物启动监听英雄  
 	void StartListen(CCNode* m_hero, CCNode* m_map);
-	//监听函数,每隔3秒检测下，计算英雄与怪物的距离  
+	//监听函数,每隔2秒检测下，计算英雄与怪物的距离  
 	void updateMonster(float delta);
 	//更新函数，如果英雄在可视范围内，不断触发  
 	void update(float delta);
+	void getBloodStatus(localStatus* nowStatus);
+	void cutBlood(float delta);//干掉血
 
 	CREATE_FUNC(Monster);
 
 private:
 	CCSprite* m_MonsterSprite;//怪物精灵  
 	char *Monster_name;//用来保存初始状态的精灵图片名称  
-	//ProgressView*  Monster_xue;//怪物血条  
-
+	ProgressView*  Monster_xue;//怪物血条  
+	localStatus* nowStatus;//当前状态层
 	CCNode* my_hero;//当前英雄  
 	CCNode* my_map;//当前地图  
 	float   dis;//当前怪物和英雄的距离  
+
 
 };
 

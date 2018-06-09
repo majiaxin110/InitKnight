@@ -7,6 +7,7 @@ Monster::Monster(void)
 	MonsterDirecton = TRUE;//向右运动  
 	Monster_name = NULL;
 	IsAttack = false;
+	Monster_xue = NULL; //后面初始化
 }
 
 Monster::~Monster(void)
@@ -17,26 +18,25 @@ CCSprite* Monster::GetSprite()
 {
 	return m_MonsterSprite;
 }
-void  Monster::InitMonsterSprite(char *name)
+void  Monster::InitMonsterSprite(char *name)  //不带血条的怪物
 {
 	Monster_name = name;
 	this->m_MonsterSprite = CCSprite::create(name);
 	m_MonsterSprite->setFlipX(!MonsterDirecton);  //图片初始方向
 	this->addChild(m_MonsterSprite);
 }
-/*void Monster::InitMonsterSprite(char *name, char *xue_back, char* xue_fore)
+void Monster::InitMonsterSprite(char *name, char *xue_back, char* xue_fore)  //带血条的怪物
 {
 	InitMonsterSprite(name);
 	//设置怪物的血条   
 	Monster_xue = new ProgressView();
 	Monster_xue->setPosition(ccp(m_MonsterSprite->getPositionX() + 25, m_MonsterSprite->getPositionY() + 50));//设置在怪物上头    
 																											  //Monster_xue->setScale(2.2f);    
-	Monster_xue->setBackgroundTexture(xue_back);
-	Monster_xue->setForegroundTexture(xue_fore);
+	Monster_xue->initProgressView(xue_back,xue_fore);
 	Monster_xue->setTotalProgress(300.0f);
 	Monster_xue->setCurrentProgress(300.0f);
 	this->addChild(Monster_xue);
-}*/
+}
 void  Monster::SetAnimation(const char *name_each, unsigned int num, bool run_directon)
 {
 	if (MonsterDirecton != run_directon)
@@ -86,7 +86,7 @@ void  Monster::AttackAnimation(const char *name_each, const unsigned int num, bo
 		sprintf(szName, "%s%d.png", name_each, i);
 		animation->addSpriteFrameWithFileName(szName); //加载动画的帧    
 	}
-	animation->setDelayPerUnit(2.8f / 14.0f);
+	animation->setDelayPerUnit(2.0f / 14.0f);
 	animation->setRestoreOriginalFrame(true);
 	animation->setLoops(1); //动画循环1次    
 							//将动画包装成一个动作  
@@ -105,7 +105,7 @@ void Monster::AttackEnd()
 	//恢复精灵原来的初始化贴图   
 	this->removeChild(m_MonsterSprite, TRUE);//把原来的精灵删除掉  
 	m_MonsterSprite = CCSprite::create(Monster_name);//恢复精灵原来的贴图样子  
-	m_MonsterSprite->setFlipX(!MonsterDirecton);  //增加！
+	m_MonsterSprite->setFlipX(MonsterDirecton);  //增加！
 	this->addChild(m_MonsterSprite);
 	IsAttack = false;
 }
@@ -125,7 +125,7 @@ void Monster::FollowRun(CCNode* m_hero, CCNode* m_map)
 	if (dis <= 64)//在怪物攻击范围内，怪物停止移动  
 	{
 		this->StopAnimation();//停止跑动  
-		JudegeAttack();//以一定的概率判断是是否出动攻击  
+		JudegeAttack( );//必定攻击怪物 
 		return;
 	}
 
@@ -174,14 +174,23 @@ void Monster::FollowRun(CCNode* m_hero, CCNode* m_map)
 }
 void Monster::JudegeAttack()//必定攻击
 {
-	srand((UINT)GetCurrentTime());
+	//srand((UINT)GetCurrentTime());
 	//int x = rand() % 100;
 	//if (x>98)
 	//{
 		this->AttackAnimation("monster2attack", 4, MonsterDirecton);
+		//this->schedule(schedule_selector(Monster::cutBlood), 1.0f); 
+		//this->schedule(schedule_selector(Monster::updateMonster), 2.0f);
 	//}
 
 }
+
+void Monster::cutBlood(float delta)
+{
+	if(IsAttack==1)  //怪物若正在攻击
+	nowStatus->cutHeroBlood(1);  //干掉血
+}
+
 void  Monster::MonsterSeeRun()
 {
 	if (dis<150)
@@ -202,14 +211,17 @@ void  Monster::MonsterSeeRun()
 	this->runAction(xunluo);
 }
 //启动监听  
+
 void Monster::StartListen(CCNode* m_hero, CCNode* m_map)
 {
 	my_hero = m_hero;
 	my_map = m_map;
+	//nowStatus = nowStatus1;
 	this->schedule(schedule_selector(Monster::updateMonster), 2.0f);//每隔2秒计算距离  
 	this->scheduleUpdate();//英雄一旦进入可视范围，怪物追着英雄打  
+	this->schedule(schedule_selector(Monster::cutBlood), 0.2f); //0.2f判断一次
 }
-//监听函数,每隔3秒检测下  
+//监听函数,每隔2秒检测下  
 void Monster::updateMonster(float delta)
 {
 	//得到两点x的距离,记得怪物的坐标要加上地图的  
@@ -228,4 +240,9 @@ void Monster::update(float delta)
 {
 	if (dis<150)///当英雄在它的可视范围内，不断追着英雄  
 		FollowRun(my_hero, my_map);
+}
+
+void Monster::getBloodStatus(localStatus *nowStatus1)
+{
+	nowStatus = nowStatus1;
 }

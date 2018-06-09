@@ -128,6 +128,7 @@ void localPlay::onPress(EventKeyboard::KeyCode keyCode)
 	case EventKeyboard::KeyCode::KEY_J:
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/sword.wav");
 		hero->setAttackAnimation();
+
 		break;
 	default:
 		break;

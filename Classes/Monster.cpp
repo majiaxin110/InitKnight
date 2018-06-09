@@ -30,8 +30,7 @@ void Monster::InitMonsterSprite(char *name, char *xue_back, char* xue_fore)  //´
 	InitMonsterSprite(name);
 	//ÉèÖÃ¹ÖÎïµÄÑªÌõ   
 	Monster_xue = new ProgressView();
-	Monster_xue->setPosition(ccp(m_MonsterSprite->getPositionX() + 25, m_MonsterSprite->getPositionY() + 50));//ÉèÖÃÔÚ¹ÖÎïÉÏÍ·    
-																											  //Monster_xue->setScale(2.2f);    
+	Monster_xue->setPosition(ccp(m_MonsterSprite->getPositionX() + 25, m_MonsterSprite->getPositionY() + 50));//ÉèÖÃÔÚ¹ÖÎïÉÏÍ·    																											  //Monster_xue->setScale(2.2f);    
 	Monster_xue->initProgressView(xue_back,xue_fore);
 	Monster_xue->setTotalProgress(300.0f);
 	Monster_xue->setCurrentProgress(300.0f);
@@ -110,7 +109,7 @@ void Monster::AttackEnd()
 	IsAttack = false;
 }
 
-void Monster::FollowRun(CCNode* m_hero, CCNode* m_map)
+void Monster::FollowRun(Hero* m_hero, CCNode* m_map)
 {
 	//µÃµ½Á½µãxµÄ¾àÀë,¼ÇµÃ¹ÖÎïµÄ×ø±êÒª¼ÓÉÏµØÍ¼µÄ  
 	float x = m_hero->getPositionX() - (this->getPositionX() + m_map->getPositionX());
@@ -179,16 +178,29 @@ void Monster::JudegeAttack()//±Ø¶¨¹¥»÷
 	//if (x>98)
 	//{
 		this->AttackAnimation("monster2attack", 4, MonsterDirecton);
-		//this->schedule(schedule_selector(Monster::cutBlood), 1.0f); 
+		//this->schedule(schedule_selector(Monster::cutHeroBlood), 1.0f); 
 		//this->schedule(schedule_selector(Monster::updateMonster), 2.0f);
 	//}
 
 }
 
-void Monster::cutBlood(float delta)
+void Monster::cutHeroBlood(float delta)
 {
 	if(IsAttack==1)  //¹ÖÎïÈôÕıÔÚ¹¥»÷
 	nowStatus->cutHeroBlood(1);  //¸ÉµôÑª
+}
+
+void Monster::cutMonsterBlood(float delta)//¸Éµô¹ÖÎïÑª
+{
+	float x = my_hero->getPositionX() - (this->getPositionX() + my_map->getPositionX());
+	//µÃµ½Á½µãyµÄ¾àÀë£¬¼ÇµÃ¹ÖÎïµÄ×ø±êÒª¼ÓÉÏµØÍ¼µÄ  
+	float y = my_hero->getPositionY() - (this->getPositionY() + my_map->getPositionY());
+
+	//ÏÈ¼ÆËã¹ÖÎïºÍÓ¢ĞÛµÄ¾àÀë  
+	dis = sqrt(pow(x, 2) + pow(y, 2));
+	if (my_hero->isAttacking == true)
+		if (dis < 64)
+			Monster_xue->cutBlood(3);
 }
 
 void  Monster::MonsterSeeRun()
@@ -212,14 +224,15 @@ void  Monster::MonsterSeeRun()
 }
 //Æô¶¯¼àÌı  
 
-void Monster::StartListen(CCNode* m_hero, CCNode* m_map)
+void Monster::StartListen(Hero* m_hero, CCNode* m_map)
 {
 	my_hero = m_hero;
 	my_map = m_map;
 	//nowStatus = nowStatus1;
 	this->schedule(schedule_selector(Monster::updateMonster), 2.0f);//Ã¿¸ô2Ãë¼ÆËã¾àÀë  
 	this->scheduleUpdate();//Ó¢ĞÛÒ»µ©½øÈë¿ÉÊÓ·¶Î§£¬¹ÖÎï×·×ÅÓ¢ĞÛ´ò  
-	this->schedule(schedule_selector(Monster::cutBlood), 0.2f); //0.2fÅĞ¶ÏÒ»´Î
+	this->schedule(schedule_selector(Monster::cutHeroBlood), 0.2f); //0.2fÅĞ¶ÏÒ»´Î
+	this->schedule(schedule_selector(Monster::cutMonsterBlood), 0.05f);
 }
 //¼àÌıº¯Êı,Ã¿¸ô2Ãë¼ì²âÏÂ  
 void Monster::updateMonster(float delta)

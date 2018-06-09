@@ -115,5 +115,20 @@ proj.win32/*.opensdf
 proj.win32/Debug.*/
 proj.win32/Release.*/
 
+
 # others
 cocos2d/
+
+
+proj.win32/.vs/InitKnight/v15/Browse.VC.db
+
+proj.win32/.vs/InitKnight/v15/Solution.VC.db
+
+proj.win32/.vs/InitKnight/v15/Solution.VC.db-shm
+
+proj.win32/.vs/InitKnight/v15/Solution.VC.db-wal
+
+proj.win32/InitKnight.vcxproj
+
+
+proj.win32/InitKnight.vcxproj.filters

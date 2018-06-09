@@ -20,10 +20,12 @@ private:
 	Monster1 *monster1;
 	Monster *monster2;
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
-	
-public:
 	localStatus* statusLayer;
+public:
+	// there's no 'id' in cpp, so we recommend returning the class instance Vec2er
 	//static cocos2d::Scene* createScene();
+
+	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
 	virtual bool init();
 	virtual void onEnter();
 
@@ -33,7 +35,6 @@ public:
 	cocos2d::EventKeyboard::KeyCode whichPressed();
 	void update(float delta) override;
 
-	bool detectPlayerPosition(cocos2d::Vec2 position);//检测Hero位置与地图某些地方的重合问题，返回是否可移动
 	void setPlayerPosition(cocos2d::Vec2 position);
 	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);
 	void setViewpointCenter(cocos2d::Vec2 position);

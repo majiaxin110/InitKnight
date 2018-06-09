@@ -36,9 +36,7 @@ public:
 	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);
 	void setViewpointCenter(cocos2d::Vec2 position);
 
-	void changeToLoseScene();
-	void changeToWinScene();
-
+	
 	// implement the "static create()" method manually
 	CREATE_FUNC(localPlay);
 };

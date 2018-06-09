@@ -1,6 +1,7 @@
 #include "localPlayStatusLayer.h"
 #include "ui/CocosGUI.h"
 #include "SimpleAudioEngine.h"
+#include "ScoreScene.h"
 
 bool localStatus::init()
 {
@@ -24,7 +25,7 @@ bool localStatus::init()
 
 	cBloodProgress->setScale(1.0f);
 	cBloodProgress->setTotalProgress(100.0f);
-	cBloodProgress->setCurrentProgress(50.0f);
+	cBloodProgress->setCurrentProgress(20.0f);
 	this->addChild(cBloodProgress, 101);
 
 	auto pointTip = ui::ImageView::create("pointTip.png");
@@ -42,7 +43,10 @@ bool localStatus::init()
 bool localStatus::cutHeroBlood(float amount)
 {
 	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHurt.mp3");
-	return cBloodProgress->cutBlood(amount);
+	bool isDied = cBloodProgress->cutBlood(amount);
+	if (isDied)
+		changeToLoseScene();
+	return isDied;
 }
 
 void localStatus::addHeroBlood(float amount)
@@ -79,4 +83,25 @@ void localStatus::addPoint(int add)
 {
 	playerPoint += add;
 	pointLabel->setString(std::to_string(playerPoint));
+}
+
+
+void localStatus::changeToLoseScene()
+{
+	auto loseScene = ScoreScene::create();
+	loseScene->putBackImage("loseBackground.png");
+	loseScene->getScore(playerPoint);
+	auto reScene = TransitionFade::create(1.0f, loseScene);
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
+	Director::getInstance()->replaceScene(reScene);
+}
+
+void localStatus::changeToWinScene()
+{
+	auto winScene = ScoreScene::create();
+	winScene->putBackImage("winBackground.png");
+	winScene->getScore(playerPoint);
+	auto reScene = TransitionFade::create(1.0f, winScene);
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
+	Director::getInstance()->replaceScene(reScene);
 }

@@ -24,5 +24,8 @@ public:
 	void showPaojieDialog();
 	void removePaoNPCDialog();
 
+	void changeToLoseScene();
+	void changeToWinScene();
+
 	CREATE_FUNC(localStatus);
 };  

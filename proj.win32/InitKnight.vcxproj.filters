@@ -36,10 +36,7 @@
     <ClCompile Include="..\Classes\LocalPlayStatusLayer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\loseScene.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\winScene.cpp">
+    <ClCompile Include="..\Classes\ScoreScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,10 +65,7 @@
     <ClInclude Include="..\Classes\localPlayStatusLayer.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\loseScene.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\winScene.h">
+    <ClInclude Include="..\Classes\ScoreScene.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

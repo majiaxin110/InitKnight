@@ -1,6 +1,7 @@
 #include "localPlayMainLayer.h"
 
 USING_NS_CC;
+const int tileSize = 32;//瓦片大小
 
 // on "init" you need to initialize your instance
 bool localPlay::init()
@@ -28,6 +29,13 @@ bool localPlay::init()
 	hero->initHeroSprite();
 	hero->setPosition(Vec2(x, y));
 	addChild(hero, 2, 200);
+
+	monster1 = Monster::create();
+	//monster2->InitMonsterSprite("monster2walk1.png");
+	monster1->InitMonsterSprite("monster1/monsterwalk1.png", "bloodBack.png", "bloodFore.png");
+	monster1->setPosition(Vec2((18 + 2)*tileSize, (38 + 2)*tileSize));
+	this->addChild(monster1, 1);
+	monster1->StartListen(hero, _tileMap);
 
 	setViewpointCenter(hero->getPosition());
 	//获取地图的不同层

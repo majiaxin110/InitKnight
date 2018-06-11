@@ -7,6 +7,8 @@
 #include "localPlayStatusLayer.h"
 #include "localPlayScene.h"
 #include <map>
+#include "Monster.h"
+
 
 class localPlay : public cocos2d::Layer
 {
@@ -16,6 +18,7 @@ private:
 	cocos2d::TMXLayer* _heart;
 	cocos2d::TMXLayer* _npc;
 	Hero *hero;
+	Monster *monster1;
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
 	
 public:

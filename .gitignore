@@ -114,6 +114,6 @@ proj.win32/*.sdf
 proj.win32/*.opensdf
 proj.win32/Debug.*/
 proj.win32/Release.*/
-
+proj.win32/
 # others
 cocos2d/

@@ -59,6 +59,7 @@ void localPlay::getStatusLayer(localStatus* tLayer)
 	else
 		cocos2d::log("status layer tag %d", tLayer->getTag());
 	statusLayer = tLayer;
+	monster1->getBloodStatus(statusLayer);//»√π÷ŒÔΩ” ‹statuslayer
 }
 cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
 {

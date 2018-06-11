@@ -59,7 +59,7 @@ void Hero::setRunAnimation(bool runDirection)
 	isMoving = true;
 }
 
-void Hero::setAttackAnimation()
+/*void Hero::setAttackAnimation()
 {
 	if (isAttacking || cHeroSprite->getNumberOfRunningActions() > 0)
 		return;
@@ -78,7 +78,43 @@ void Hero::setAttackAnimation()
 	action->setTag(102);
 	cHeroSprite->runAction(action);
 	isAttacking = false;
+}*/
+
+void  Hero::setAttackAnimation()
+{
+	if (isAttacking || cHeroSprite->getNumberOfRunningActions() > 0)
+		return;
+	CCAnimation* animation = CCAnimation::create();
+	for (int i = 1; i <= 4; i++)
+	{
+		char szName[100] = { 0 };
+		sprintf(szName, "knightAnime/attackKnife_%d.png", i);
+		animation->addSpriteFrameWithFileName(szName); //加载动画的帧    
+	}
+	animation->setDelayPerUnit(2.0f / 14.0f);
+	animation->setRestoreOriginalFrame(true);
+	animation->setLoops(1); //动画循环1次    
+							//将动画包装成一个动作  
+	CCAnimate* act = CCAnimate::create(animation);
+	//创建回调动作，攻击结束后调用AttackEnd()  
+	CCCallFunc* callFunc = CCCallFunc::create(this, callfunc_selector(Hero::AttackEnd));
+	//创建连续动作  
+	CCActionInterval* attackact = CCSequence::create(act, callFunc, NULL);
+
+	cHeroSprite->runAction(attackact);
+	isAttacking = true;
+
 }
+void Hero::AttackEnd()
+{
+	//恢复精灵原来的初始化贴图   
+	this->removeChild(cHeroSprite, TRUE);//把原来的精灵删除掉  
+	cHeroSprite = CCSprite::create("knight.png");//恢复精灵原来的贴图样子  
+	cHeroSprite->setFlipX(heroDirection);  //增加！
+	this->addChild(cHeroSprite);
+	isAttacking = false;
+}
+
 
 void Hero::setUpAnimation()
 {

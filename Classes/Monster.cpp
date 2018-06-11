@@ -191,7 +191,7 @@ void Monster::cutHeroBlood(float delta)
 		nowStatus->cutHeroBlood(1);  //干掉血
 }
 
-/*void Monster::cutMonsterBlood(float delta)//干掉怪物血
+void Monster::cutMonsterBlood(float delta)//干掉怪物血
 {
 	float x = my_hero->getPositionX() - (this->getPositionX() + my_map->getPositionX());
 	//得到两点y的距离，记得怪物的坐标要加上地图的  
@@ -202,7 +202,7 @@ void Monster::cutHeroBlood(float delta)
 	if (my_hero->isAttacking == true)
 		if (dis < 64)
 			Monster_xue->cutBlood(3);
-}*/
+}
 
 void  Monster::MonsterSeeRun()
 {
@@ -229,11 +229,11 @@ void Monster::StartListen(Hero* m_hero, CCNode* m_map)
 {
 	my_hero = m_hero;
 	my_map = m_map;
-	//nowStatus = nowStatus1;
+	//nowStatus = nowStatus1;  放在单独函数中 
 	this->schedule(schedule_selector(Monster::updateMonster), 2.0f);//每隔2秒计算距离  
 	this->scheduleUpdate();//英雄一旦进入可视范围，怪物追着英雄打  
-	//this->schedule(schedule_selector(Monster::cutHeroBlood), 0.2f); //0.2f判断一次
-	//this->schedule(schedule_selector(Monster::cutMonsterBlood), 0.05f);
+	this->schedule(schedule_selector(Monster::cutHeroBlood), 0.2f); //0.2f判断一次
+	this->schedule(schedule_selector(Monster::cutMonsterBlood), 0.05f);
 }
 //监听函数,每隔2秒检测下  
 void Monster::updateMonster(float delta)
@@ -256,7 +256,7 @@ void Monster::update(float delta)
 		FollowRun(my_hero, my_map);
 }
 
-void Monster::getBloodStatus(localStatus *nowStatus1)
+void Monster::getBloodStatus(localStatus* nowStatus1)
 {
-	nowStatus = nowStatus1;
+	nowStatus = nowStatus1;  //当mainlayer中初始化时获取
 }

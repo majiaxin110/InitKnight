@@ -34,8 +34,13 @@ bool localPlay::init()
 	//monster2->InitMonsterSprite("monster2walk1.png");
 	monster1->InitMonsterSprite("monster1/monsterwalk1.png", "bloodBack.png", "bloodFore.png");
 	monster1->setPosition(Vec2((18 + 2)*tileSize, (38 + 2)*tileSize));
-	this->addChild(monster1, 1);
+	this->addChild(monster1, 2);
 	monster1->StartListen(hero, _tileMap);
+
+	bullettemp = Bullet::create();
+	bullettemp->initBulletSprite(hero);
+	this->addChild(bullettemp);  //初始化子弹
+
 
 	setViewpointCenter(hero->getPosition());
 	//获取地图的不同层
@@ -60,6 +65,7 @@ void localPlay::getStatusLayer(localStatus* tLayer)
 		cocos2d::log("status layer tag %d", tLayer->getTag());
 	statusLayer = tLayer;
 	monster1->getBloodStatus(statusLayer);//让怪物接受statuslayer
+	bullettemp->getBloodStatus(statusLayer);//让子弹接受
 }
 cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
 {
@@ -75,6 +81,8 @@ cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
 		return EventKeyboard::KeyCode::KEY_Q;
 	if (keyStatus[EventKeyboard::KeyCode::KEY_J])
 		return EventKeyboard::KeyCode::KEY_J;
+	if (keyStatus[EventKeyboard::KeyCode::KEY_K])
+		return EventKeyboard::KeyCode::KEY_K;//尝试用k攻击
 	if (keyStatus[EventKeyboard::KeyCode::KEY_SPACE])
 		return EventKeyboard::KeyCode::KEY_SPACE;
 	return EventKeyboard::KeyCode::KEY_NONE;
@@ -99,23 +107,33 @@ void localPlay::onPress(EventKeyboard::KeyCode keyCode)
 	{
 	case EventKeyboard::KeyCode::KEY_W:
 		hero->setRunAnimation();
+		hero->heroface = 4;  //设置英雄朝向
 		playerPos.y += movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_A:
 		hero->setRunAnimation(1);
+		hero->heroface = 1;
 		playerPos.x -= movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_S:
 		hero->setRunAnimation();
+		hero->heroface = 3;
 		playerPos.y -= movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_D:
 		hero->setRunAnimation(0);
+		hero->heroface = 2;
 		playerPos.x += movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_J:
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/sword.wav");
 		hero->setAttackAnimation();
+		break;
+	case EventKeyboard::KeyCode::KEY_K: //发射子弹
+		bullettemp = Bullet::create();
+		bullettemp->initBulletSprite(hero);
+		this->addChild(bullettemp);
+		bullettemp->StartListen(monster1, _tileMap);
 		break;
 	default:
 		break;

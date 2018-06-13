@@ -11,6 +11,7 @@ Hero::Hero()
 	heroDirection = 0;
 	cHeroSprite = nullptr;
 	moveSpeed = 1.5f;
+	heroface = 1;
 }
 
 void Hero::initHeroSprite()

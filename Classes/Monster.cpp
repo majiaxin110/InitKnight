@@ -25,7 +25,7 @@ void  Monster::InitMonsterSprite(char *name)  //不带血条的怪物
 	m_MonsterSprite->setFlipX(MonsterDirecton);  //图片初始方向
 	this->addChild(m_MonsterSprite);
 }
-void Monster::InitMonsterSprite(char *name, char *xue_back, char* xue_fore)  //带血条的怪物
+void Monster::InitMonsterSprite(char *name, char *xue_back, char* xue_fore)  //带血条的怪物  函数重载
 {
 	InitMonsterSprite(name);
 	//设置怪物的血条   
@@ -119,7 +119,7 @@ void Monster::FollowRun(Hero* m_hero, CCNode* m_map)
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
 
-	if (dis >= 150)//当怪物与英雄距离超过150
+	if (dis >= 100)//当怪物与英雄距离超过150
 		return;
 	if (dis <= 64)//在怪物攻击范围内，怪物停止移动  
 	{
@@ -206,7 +206,7 @@ void Monster::cutMonsterBlood(float delta)//干掉怪物血
 
 void  Monster::MonsterSeeRun()
 {
-	if (dis<150)
+	if (dis<100)
 		return;
 	this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  
 	CCMoveBy *moveby1;
@@ -244,15 +244,16 @@ void Monster::updateMonster(float delta)
 	float y = my_hero->getPositionY() - (this->getPositionY() + my_map->getPositionY());
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
-	if (dis >= 150)
+	if (dis >= 100)
 	{
 		if (!IsRunning)
 			MonsterSeeRun();
 	}
 }
+
 void Monster::update(float delta)
 {
-	if (dis<150)///当英雄在它的可视范围内，不断追着英雄  
+	if (dis<100)///当英雄在它的可视范围内，不断追着英雄  
 		FollowRun(my_hero, my_map);
 }
 

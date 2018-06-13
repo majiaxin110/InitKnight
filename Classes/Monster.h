@@ -49,13 +49,15 @@ public:
 	void cutHeroBlood(float delta);//干掉英雄血
 	void cutMonsterBlood(float delta);//干掉怪物血
 
+	ProgressView*  Monster_xue;//怪物血条  
+	localStatus* nowStatus;//当前状态层
+
 	CREATE_FUNC(Monster);
 
 private:
 	CCSprite* m_MonsterSprite;//怪物精灵  
 	char *Monster_name;//用来保存初始状态的精灵图片名称  
-	ProgressView*  Monster_xue;//怪物血条  
-	localStatus* nowStatus;//当前状态层
+
 	Hero* my_hero;//当前英雄  
 	CCNode* my_map;//当前地图  
 	float   dis;//当前怪物和英雄的距离  

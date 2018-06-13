@@ -15,6 +15,7 @@ public:
 	bool isMoving;//是否正在移动
 	bool isAttacking;//是否正在攻击
 	bool heroDirection;//左右朝向，0向右，1向左
+	int heroface; //hero上下左右
 
 	Hero();
 

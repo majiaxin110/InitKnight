@@ -8,6 +8,8 @@
 #include "localPlayScene.h"
 #include <map>
 #include "Monster.h"
+#include "Bullet.h"
+#include "Weapon.h"
 
 
 class localPlay : public cocos2d::Layer
@@ -19,6 +21,9 @@ private:
 	cocos2d::TMXLayer* _npc;
 	Hero *hero;
 	Monster *monster1;
+	Weapon *weapon;
+	Vector<Bullet*> bullet;
+	Bullet *bullettemp;
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
 	
 public:

@@ -7,9 +7,10 @@
 #include "localPlayStatusLayer.h"
 #include "localPlayScene.h"
 #include <map>
+#include <vector>
 #include "Monster.h"
 #include "Bullet.h"
-#include "Weapon.h"
+//#include "Weapon.h"
 
 
 class localPlay : public cocos2d::Layer
@@ -20,10 +21,10 @@ private:
 	cocos2d::TMXLayer* _heart;
 	cocos2d::TMXLayer* _npc;
 	Hero *hero;
-	Monster *monster1;
-	Weapon *weapon;
-	Vector<Bullet*> bullet;
-	Bullet *bullettemp;
+	
+	//Bullet *
+	//Weapon *weapon;
+	//Vector<Bullet*> bullet;
 	std::map<cocos2d::EventKeyboard::KeyCode, bool> keyStatus;
 	
 public:
@@ -32,6 +33,7 @@ public:
 
 	virtual bool init();
 	virtual void onEnter();
+	//virtual void onExit();
 
 	virtual void onPress(cocos2d::EventKeyboard::KeyCode keyCode);
 
@@ -44,7 +46,10 @@ public:
 	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);
 	void setViewpointCenter(cocos2d::Vec2 position);
 
-	
+	std::vector<Monster*> monsterVec;
+	std::vector<Bullet*> bulletVec;
+
+	//std::vector<Monster*>& getMonsterVec();
 	// implement the "static create()" method manually
 	CREATE_FUNC(localPlay);
 };

@@ -45,7 +45,7 @@ void ScoreScene::getScore(int sc)
 	auto scoreLabel = Label::createWithTTF(std::to_string(playerScore), "fonts/Deng.ttf", 50);
 	scoreLabel->setTextColor(Color4B::ORANGE);
 	scoreLabel->enableShadow(Color4B(200,200,200,90));
-	scoreLabel->setPosition(Vec2(visibleSize.width / 2+30, visibleSize.height / 2+30));
+	scoreLabel->setPosition(Vec2(visibleSize.width / 2+40, visibleSize.height / 2+30));
 	this->addChild(scoreLabel,1);
 
 	uploadScore();

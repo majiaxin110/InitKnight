@@ -30,17 +30,14 @@ bool localPlay::init()
 	hero->setPosition(Vec2(x, y));
 	addChild(hero, 2, 200);
 
-	monster1 = Monster::create();
+	auto monster1 = Monster::create();
 	//monster2->InitMonsterSprite("monster2walk1.png");
 	monster1->InitMonsterSprite("monster1/monsterwalk1.png", "bloodBack.png", "bloodFore.png");
 	monster1->setPosition(Vec2((18 + 2)*tileSize, (38 + 2)*tileSize));
+	monster1->setTag(4088);
 	this->addChild(monster1, 2);
+	monsterVec.push_back(monster1);
 	monster1->StartListen(hero, _tileMap);
-
-	bullettemp = Bullet::create();
-	bullettemp->initBulletSprite(hero);
-	this->addChild(bullettemp);  //初始化子弹
-
 
 	setViewpointCenter(hero->getPosition());
 	//获取地图的不同层
@@ -64,8 +61,8 @@ void localPlay::getStatusLayer(localStatus* tLayer)
 	else
 		cocos2d::log("status layer tag %d", tLayer->getTag());
 	statusLayer = tLayer;
-	monster1->getBloodStatus(statusLayer);//让怪物接受statuslayer
-	bullettemp->getBloodStatus(statusLayer);//让子弹接受
+	monsterVec.at(0)->getBloodStatus(statusLayer);//让怪物接受statuslayer
+	//bullettemp->getBloodStatus(statusLayer);//让子弹接受
 }
 cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
 {
@@ -95,6 +92,37 @@ void localPlay::update(float delta)
 	if (pressedKey != EventKeyboard::KeyCode::KEY_NONE)
 	{
 		onPress(pressedKey);
+	}
+
+	for (unsigned i = 0; i < monsterVec.size(); i++)
+	{
+		bool flag = false;
+		for (auto &j : bulletVec)
+		{
+			if (j->ifexist)
+			{
+				float x1 = monsterVec[i]->getPositionX() - j->bulletsprite->getPositionX();
+				//得到两点y的距离 
+				float y1 = monsterVec[i]->getPositionY() - j->bulletsprite->getPositionY();
+				//先计算怪物和子弹的距离  
+				float distance = sqrt(pow(x1, 2) + pow(y1, 2));
+				if (distance < 60 && monsterVec[i]->isDied == false)
+				{
+					if ((monsterVec[i])->getHurt(10.0f))//怪兽被消灭
+					{
+						this->removeChild(monsterVec[i]);
+						monsterVec.erase(monsterVec.begin()+i);
+						statusLayer->addPoint(100);
+						flag = true;
+						break;
+					}
+					j->removeBulletFromOutside();
+				}
+			}
+		}
+		if (flag)
+			break;
+		log("Monster Vector size:%d", monsterVec.size());
 	}
 
 }
@@ -129,12 +157,7 @@ void localPlay::onPress(EventKeyboard::KeyCode keyCode)
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/sword.wav");
 		hero->setAttackAnimation();
 		break;
-	case EventKeyboard::KeyCode::KEY_K: //发射子弹
-		bullettemp = Bullet::create();
-		bullettemp->initBulletSprite(hero);
-		this->addChild(bullettemp);
-		bullettemp->StartListen(monster1, _tileMap);
-		break;
+	
 	default:
 		break;
 	}
@@ -292,6 +315,13 @@ void localPlay::setViewpointCenter(Vec2 position)
 	this->setPosition(offset);
 }
 
+
+
+/*std::vector<Monster*>& localPlay::getMonsterVec()
+{
+	return monsterVec;
+}*/
+
 void localPlay::onEnter()
 {
 	Layer::onEnter();
@@ -301,6 +331,16 @@ void localPlay::onEnter()
 	keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		this->keyStatus[keyCode] = true;
+		//单次按下相应
+		if (keyCode == EventKeyboard::KeyCode::KEY_K)
+		{
+			auto bulletTemp = Bullet::create();
+			bulletTemp->initBulletSprite(hero);
+			bulletTemp->setTag(4088);
+			this->addChild(bulletTemp);
+			bulletVec.push_back(bulletTemp);
+			bulletTemp->StartListen();
+		}
 		log("%d pressed", keyCode);
 	};
 

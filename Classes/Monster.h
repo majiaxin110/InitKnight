@@ -5,6 +5,7 @@
 #include "bloodProgress.h"
 #include "hero.h"
 
+
 USING_NS_CC;
 
 class Monster :public cocos2d::CCNode
@@ -12,6 +13,7 @@ class Monster :public cocos2d::CCNode
 public:
 	Monster(void);
 	~Monster(void);
+	bool isDied;
 	//根据图片名创建怪物，不带血条  
 	void InitMonsterSprite(char *name);
 	//带血条的怪物   
@@ -24,8 +26,8 @@ public:
 	void AttackAnimation(const char *name_each, const unsigned int num, bool run_directon);
 	//攻击动画结束  
 	void AttackEnd();
-	//返回英雄  
-	CCSprite* GetSprite();
+	//返回怪物sprite  
+	Sprite* GetSprite();
 	//判断是否在跑动画  
 	bool IsRunning;
 	//判断是否在攻击动画  
@@ -33,21 +35,22 @@ public:
 	//英雄运动的方向  
 	bool MonsterDirecton;
 
-	void FollowRun(Hero* m_hero, CCNode* m_map);
+	void FollowRun(Hero* m_hero, Node* m_map);
 	//判断是否攻击  
-	void JudegeAttack();
+	void JudgeAttack();
 	//怪物巡逻路线  
 	void MonsterSeeRun();
 
 	//怪物启动监听英雄  
-	void StartListen(Hero* m_hero, CCNode* m_map);
+	void StartListen(Hero* m_hero, Node* m_map);
 	//监听函数,每隔2秒检测下，计算英雄与怪物的距离  
 	void updateMonster(float delta);
 	//更新函数，如果英雄在可视范围内，不断触发  
 	void update(float delta);
 	void getBloodStatus(localStatus* nowStatus);
 	void cutHeroBlood(float delta);//干掉英雄血
-	void cutMonsterBlood(float delta);//干掉怪物血
+	void heroCutMonsterBlood(float delta);//干掉怪物血
+	bool getHurt(float delta);
 
 	ProgressView*  Monster_xue;//怪物血条  
 	localStatus* nowStatus;//当前状态层
@@ -55,12 +58,12 @@ public:
 	CREATE_FUNC(Monster);
 
 private:
-	CCSprite* m_MonsterSprite;//怪物精灵  
+	Sprite* m_MonsterSprite;//怪物精灵  
 	char *Monster_name;//用来保存初始状态的精灵图片名称  
 
 	Hero* my_hero;//当前英雄  
-	CCNode* my_map;//当前地图  
-	float   dis;//当前怪物和英雄的距离  
+	Node* my_map;//当前地图  
+	float dis;//当前怪物和英雄的距离  
 
-
+	float power;//怪物攻击威力
 };

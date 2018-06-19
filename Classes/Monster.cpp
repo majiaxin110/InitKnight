@@ -6,9 +6,9 @@ Monster::Monster(void)
 {
 	IsRunning = false;//没在放动画  
 	MonsterDirecton = TRUE;//向右运动  
-	Monster_name = NULL;
 	IsAttack = false;
 	Monster_xue = NULL; //后面初始化
+	senseDistance = 200; //追踪距离
 }
 
 Monster::~Monster(void)
@@ -20,28 +20,33 @@ Sprite* Monster::GetSprite()
 {
 	return m_MonsterSprite;
 }
-void  Monster::InitMonsterSprite(char *name)  //不带血条的怪物
+
+void Monster::InitMonsterSprite(char *name)  //不带血条的怪物
 {
-	Monster_name = name;
-	this->m_MonsterSprite = Sprite::create(name);
-	m_MonsterSprite->setFlippedX(MonsterDirecton);  //图片初始方向
+	Monster_name.assign(name);
+	log(Monster_name.c_str());
+	this->m_MonsterSprite = Sprite::create((Monster_name + "/monsterwalk1.png"));
+	if (Monster_name == "monster1")
+		m_MonsterSprite->setFlippedX(MonsterDirecton);  //图片初始方向
+	else
+		m_MonsterSprite->setFlippedX(!MonsterDirecton);
 	this->addChild(m_MonsterSprite);
 	isDied = false;
 }
 
-void Monster::InitMonsterSprite(char *name, char *xue_back, char* xue_fore)  //带血条的怪物  函数重载
+void Monster::InitMonsterSprite(char *name, char *xue_back, char* xue_fore,float totalPro)  //带血条的怪物  函数重载
 {
 	InitMonsterSprite(name);
 	//设置怪物的血条   
 	Monster_xue = new ProgressView();
 	Monster_xue->setPosition(Vec2(m_MonsterSprite->getPositionX() + 25, m_MonsterSprite->getPositionY() + 50));//设置在怪物上头    																											  //Monster_xue->setScale(2.2f);    
 	Monster_xue->initProgressView(xue_back, xue_fore);
-	Monster_xue->setTotalProgress(300.0f);
-	Monster_xue->setCurrentProgress(300.0f);
+	Monster_xue->setTotalProgress(totalPro);
+	Monster_xue->setCurrentProgress(totalPro);
 	this->addChild(Monster_xue);
 }
 
-void  Monster::SetAnimation(const char *name_each, unsigned int num, bool run_directon)
+void Monster::SetAnimation(const char *name_each, unsigned int num, bool run_directon)
 {
 	if (MonsterDirecton != run_directon)
 	{
@@ -55,6 +60,7 @@ void  Monster::SetAnimation(const char *name_each, unsigned int num, bool run_di
 	{
 		char szName[100] = { 0 };
 		sprintf(szName, "%s%d.png", name_each, i);
+		log(szName);
 		animation->addSpriteFrameWithFile(szName); //加载动画的帧    
 	}
 	animation->setDelayPerUnit(2.8f / 14.0f);
@@ -73,7 +79,7 @@ void Monster::StopAnimation()
 	m_MonsterSprite->stopAllActions();//当前精灵停止所有动画  
 									  //恢复精灵原来的初始化贴图   
 	this->removeChild(m_MonsterSprite, TRUE);//把原来的精灵删除掉  
-	m_MonsterSprite = Sprite::create(Monster_name);//恢复精灵原来的贴图样子  
+	m_MonsterSprite = Sprite::create(Monster_name+"/monsterwalk1.png");//恢复精灵原来的贴图样子  
 	m_MonsterSprite->setFlippedX(!MonsterDirecton);  //增加！
 	this->addChild(m_MonsterSprite);
 	IsRunning = false;
@@ -88,6 +94,7 @@ void Monster::AttackAnimation(const char *name_each, const unsigned int num, boo
 	{
 		char szName[100] = { 0 };
 		sprintf(szName, "%s%d.png", name_each, i);
+		log(szName);
 		animation->addSpriteFrameWithFile(szName); //加载动画的帧    
 	}
 	animation->setDelayPerUnit(2.0f / 14.0f);
@@ -97,7 +104,7 @@ void Monster::AttackAnimation(const char *name_each, const unsigned int num, boo
 	Animate* act = Animate::create(animation);
 	//创建回调动作，攻击结束后调用AttackEnd()  
 	CallFunc* callFunc = CallFunc::create(this, callfunc_selector(Monster::AttackEnd));
-	//创建连续动作  
+	//创建连续动作
 	ActionInterval* attackact = Sequence::create(act, callFunc, NULL);
 
 	m_MonsterSprite->runAction(attackact);
@@ -108,7 +115,7 @@ void Monster::AttackEnd()
 {
 	//恢复精灵原来的初始化贴图   
 	this->removeChild(m_MonsterSprite, TRUE);//把原来的精灵删除掉  
-	m_MonsterSprite = Sprite::create(Monster_name);//恢复精灵原来的贴图样子  
+	m_MonsterSprite = Sprite::create((Monster_name+"/monsterwalk1.png").c_str());//恢复精灵原来的贴图样子  
 	m_MonsterSprite->setFlippedX(!MonsterDirecton);  //翻转方向
 	this->addChild(m_MonsterSprite);
 	IsAttack = false;
@@ -124,37 +131,40 @@ void Monster::FollowRun(Hero* m_hero, Node* m_map)
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
 
-	if (dis >= 200)//当怪物与英雄距离超过100
+	if (dis >= senseDistance)//当怪物与英雄距离超过100
 		return;
-	if (dis <= 150)//在怪物攻击范围内，怪物停止移动  
+	if (dis <= 64)//在怪物攻击范围内，怪物停止移动  
 	{
 		this->StopAnimation();//停止跑动
 		JudgeAttack();//必定攻击怪物
 		return;
 	}
+	std::string aniName(Monster_name);
+	aniName = aniName + "/monsterwalk";
 
-	if (x<-150)//判断怪物横坐标和英雄的距离  
+	if (x<-64)//判断怪物横坐标和英雄的距离  
 	{
 
 		MonsterDirecton = true;
 		m_MonsterSprite->setFlippedX(MonsterDirecton);//设置方向  增加！
 		if (IsAttack)
 			return;
-		this->setPosition(this->getPositionX() - 1, this->getPositionY());//怪物向英雄移动  
-		this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  
+		this->setPosition(this->getPositionX() - 0.8, this->getPositionY());//怪物向英雄移动  
+		this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 
 	}
-	else if (x>150)
+	else if (x>64)
 	{
 
 		MonsterDirecton = false;
 		m_MonsterSprite->setFlippedX(MonsterDirecton);//设置方向  增加！
 		if (IsAttack)
 			return;
-		this->setPosition(this->getPositionX() + 1, this->getPositionY());
-		this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  
+		this->setPosition(this->getPositionX() + 0.8, this->getPositionY());
+		
+		this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 	}
-	else if (x <= 150)//怪物橫坐標和英雄相差在64以内时，开始移动怪物纵坐标  
+	else if (x <= 64)//怪物橫坐標和英雄相差在64以内时，开始移动怪物纵坐标  
 	{
 
 		if (m_hero->getPositionY()>this->getPositionY())
@@ -162,16 +172,16 @@ void Monster::FollowRun(Hero* m_hero, Node* m_map)
 			m_MonsterSprite->setFlippedX(MonsterDirecton);//设置方向  增加！
 			if (IsAttack)
 				return;
-			this->setPosition(this->getPositionX(), this->getPositionY() + 1);
-			this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  
+			this->setPosition(this->getPositionX(), this->getPositionY() + 0.8);
+			this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 		}
 		else if (m_hero->getPositionY()<this->getPositionY())
 		{
 			m_MonsterSprite->setFlippedX(MonsterDirecton);//设置方向  增加！
 			if (IsAttack)
 				return;
-			this->setPosition(this->getPositionX(), this->getPositionY() - 1);
-			this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  //knightAnime/run_%d.png
+			this->setPosition(this->getPositionX(), this->getPositionY() - 0.8);
+			this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  //knightAnime/run_%d.png
 		}
 	}
 
@@ -180,10 +190,12 @@ void Monster::JudgeAttack()//判定攻击
 {
 	srand((UINT)GetCurrentTime());
 	int x = rand() % 100;
-	if (x > 85)
+	if (x > 64)
 	{
 		m_MonsterSprite->setFlippedX(!MonsterDirecton);
-		this->AttackAnimation("monster1/monsterattack", 6, MonsterDirecton);
+		std::string aniName(Monster_name);
+		aniName = aniName + "/monsterattack";
+		this->AttackAnimation(aniName.c_str(), 6, MonsterDirecton);
 	}
 	//this->schedule(schedule_selector(Monster::cutHeroBlood), 1.0f); 
 	//this->schedule(schedule_selector(Monster::updateMonster), 2.0f);
@@ -194,7 +206,7 @@ void Monster::JudgeAttack()//判定攻击
 void Monster::cutHeroBlood(float delta)
 {
 	if (IsAttack == 1)  //怪物若正在攻击
-		nowStatus->cutHeroBlood(1);  //干掉血
+		nowStatus->cutHeroBlood(0.7);  //干掉血
 }
 
 void Monster::heroCutMonsterBlood(float delta)//英雄干掉怪物血
@@ -205,16 +217,16 @@ void Monster::heroCutMonsterBlood(float delta)//英雄干掉怪物血
 
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
-	if (my_hero->isAttacking == true)
-		if (dis < 64)
-			this->getHurt(5);
+	if (my_hero->isAttacking == true && !my_hero->getAttackMode() && dis<64)
+		if (this->getHurt(5))
+			isDied = true;
 }
 
 void  Monster::MonsterSeeRun()
 {
-	if (dis<200)
+	if (dis < senseDistance)
 		return;
-	this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  
+	this->SetAnimation((Monster_name+"/monsterwalk").c_str(), 6, MonsterDirecton);//播放动画  
 	MoveBy *moveby1;
 	if (MonsterDirecton == true)
 	{
@@ -250,7 +262,7 @@ void Monster::updateMonster(float delta)
 	float y = my_hero->getPositionY() - (this->getPositionY() + my_map->getPositionY());
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
-	if (dis >= 200)
+	if (dis >= senseDistance)
 	{
 		if (!IsRunning)
 			MonsterSeeRun();
@@ -259,7 +271,7 @@ void Monster::updateMonster(float delta)
 
 void Monster::update(float delta)
 {
-	if (dis < 200)//当英雄在它的可视范围内，不断追着英雄  
+	if (dis < senseDistance)//当英雄在它的可视范围内，不断追着英雄  
 		FollowRun(my_hero, my_map);
 }
 
@@ -275,10 +287,10 @@ bool Monster::getHurt(float delta)
 
 float Monster::getSense()
 {
-	return sense;
+	return senseDistance;
 }
 
 void Monster::setSense(float sens)
 {
-	sense = sens;
+	senseDistance = sens;
 }

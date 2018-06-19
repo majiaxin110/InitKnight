@@ -20,6 +20,9 @@ private:
 	cocos2d::TMXLayer* _collidable;
 	cocos2d::TMXLayer* _heart;
 	cocos2d::TMXLayer* _npc;
+	cocos2d::TMXLayer* _diamond;
+	cocos2d::TMXLayer* _speed;
+	cocos2d::TMXLayer* _end;
 	Hero *hero;
 	
 	//Bullet *

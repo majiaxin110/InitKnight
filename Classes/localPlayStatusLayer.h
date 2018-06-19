@@ -1,13 +1,14 @@
 #pragma once  
 #include "cocos2d.h"  
 #include "bloodProgress.h"
+#include <vector>
 
 USING_NS_CC;
 
 class localStatus : public cocos2d::Layer
 {
 private:
-	ProgressView* cBloodProgress;
+	std::vector<ProgressView*> cBloodProgress;
 	Label* pointLabel;
 	int playerPoint;
 public:

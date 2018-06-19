@@ -4,7 +4,7 @@
 #include "LocalPlayStatusLayer.h"
 #include "bloodProgress.h"
 #include "hero.h"
-
+#include <string>
 
 USING_NS_CC;
 
@@ -17,7 +17,7 @@ public:
 	//根据图片名创建怪物，不带血条  
 	void InitMonsterSprite(char *name);
 	//带血条的怪物   
-	void InitMonsterSprite(char *name, char *xue_back, char* xue_fore);
+	void InitMonsterSprite(char *name, char *xue_back, char* xue_fore,float totalPro);
 	//设置动画,num为图片数目，run_directon为精灵脸朝向，false朝右,name_each为name_png中每一小张图片的公共名称部分  
 	void SetAnimation(const char *name_each, const unsigned int num, bool run_directon);
 	//停止动画  
@@ -62,13 +62,13 @@ public:
 
 private:
 	Sprite* m_MonsterSprite;//怪物精灵  
-	char *Monster_name;//用来保存初始状态的精灵图片名称  
+	std::string Monster_name;//用来保存初始状态的精灵图片名称  
 
 	Hero* my_hero;//当前英雄  
 	Node* my_map;//当前地图  
 	float dis;//当前怪物和英雄的距离  
 
-	float sense;//怪物探知英雄距离
+	float senseDistance;//怪物探知英雄距离
 
 	float power;//怪物攻击威力
 };

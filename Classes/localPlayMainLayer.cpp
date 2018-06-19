@@ -30,15 +30,39 @@ bool localPlay::init()
 	hero->setPosition(Vec2(x, y));
 	addChild(hero, 2, 200);
 
-	auto monster1 = Monster::create();
-	//monster2->InitMonsterSprite("monster2walk1.png");
-	monster1->InitMonsterSprite("monster1/monsterwalk1.png", "bloodBack.png", "bloodFore.png");
-	monster1->setPosition(Vec2((18 + 2)*tileSize, (38 + 2)*tileSize));
-	monster1->setTag(4088);
-	this->addChild(monster1, 2);
-	monsterVec.push_back(monster1);
-	monster1->StartListen(hero, _tileMap);
+	for (int i = 1; i <= 2; i++)
+	{
+		TMXObjectGroup* monsterGroup = _tileMap->getObjectGroup("monsterSp1");
+		ValueMap spawnPointMonster = monsterGroup->getObject(std::to_string(i));
 
+		auto monsterX = spawnPointMonster["x"].asFloat();
+		auto monsterY = spawnPointMonster["y"].asFloat();
+
+		auto monster1 = Monster::create();
+		monster1->InitMonsterSprite("monster1", "bloodBack.png", "bloodFore.png",250.0f);
+		monster1->setPosition(Vec2(monsterX, monsterY));
+		this->addChild(monster1, 2);
+		monsterVec.push_back(monster1);
+		monster1->StartListen(hero, _tileMap);
+	}
+
+	//第二类怪物
+	for (int i = 1; i <= 2; i++)
+	{
+		TMXObjectGroup* monsterGroup = _tileMap->getObjectGroup("monsterSp2");
+		ValueMap spawnPointMonster = monsterGroup->getObject(std::to_string(i));
+
+		auto monsterX = spawnPointMonster["x"].asFloat();
+		auto monsterY = spawnPointMonster["y"].asFloat();
+
+		auto monster2 = Monster::create();
+		monster2->InitMonsterSprite("monster2", "bloodBack.png", "bloodFore.png", 100.0f);
+		monster2->setPosition(Vec2(monsterX, monsterY));
+		monster2->setSense(monster2->getSense() * 2);
+		this->addChild(monster2, 2);
+		monsterVec.push_back(monster2);
+		monster2->StartListen(hero, _tileMap);
+	}
 	setViewpointCenter(hero->getPosition());
 	//获取地图的不同层
 	_collidable = _tileMap->getLayer("barriers");
@@ -47,8 +71,18 @@ bool localPlay::init()
 	_heart = _tileMap->getLayer("heart");
 	_heart->setVisible(true);
 	
+	_speed = _tileMap->getLayer("speed");
+	_speed->setVisible(true);
+
+	_diamond = _tileMap->getLayer("diamond");
+	_diamond->setVisible(true);
+
 	_npc = _tileMap->getLayer("npc");
 	_npc->setVisible(true);
+
+	_end = _tileMap->getLayer("end");
+	_end->setVisible(true);
+
 	this->scheduleUpdate();
 
 	return true;
@@ -61,7 +95,11 @@ void localPlay::getStatusLayer(localStatus* tLayer)
 	else
 		cocos2d::log("status layer tag %d", tLayer->getTag());
 	statusLayer = tLayer;
-	monsterVec.at(0)->getBloodStatus(statusLayer);//让怪物接受statuslayer
+	for (auto &j : monsterVec)
+	{
+		j->getBloodStatus(statusLayer);//让怪物接受statuslayer
+	}
+	//monsterVec.at(0)->getBloodStatus(statusLayer);
 	//bullettemp->getBloodStatus(statusLayer);//让子弹接受
 }
 cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
@@ -97,6 +135,12 @@ void localPlay::update(float delta)
 	for (unsigned i = 0; i < monsterVec.size(); i++)
 	{
 		bool flag = false;
+		if (monsterVec[i]->isDied == true)//以刀消灭
+		{
+			this->removeChild(monsterVec[i]);
+			monsterVec.erase(monsterVec.begin() + i);
+			statusLayer->addPoint(100);
+		}
 		for (auto &j : bulletVec)
 		{
 			if (j->ifexist)
@@ -106,6 +150,7 @@ void localPlay::update(float delta)
 				float y1 = monsterVec[i]->getPositionY() - j->bulletsprite->getPositionY();
 				//先计算怪物和子弹的距离  
 				float distance = sqrt(pow(x1, 2) + pow(y1, 2));
+				
 				if (distance < 60 && monsterVec[i]->isDied == false)
 				{
 					if ((monsterVec[i])->getHurt(10.0f))//怪兽被消灭
@@ -122,7 +167,7 @@ void localPlay::update(float delta)
 		}
 		if (flag)
 			break;
-		log("Monster Vector size:%d", monsterVec.size());
+		//log("Monster Vector size:%d", monsterVec.size());
 	}
 
 }
@@ -192,14 +237,60 @@ bool localPlay::detectPlayerPosition(Vec2 position)
 		Value prop = _tileMap->getPropertiesForGID(tileGid);
 		ValueMap propValueMap = prop.asValueMap();
 
-		std::string collect = propValueMap["isCollectable"].asString();
+		std::string collect = propValueMap["isCollectableHeart"].asString();
 
-		if (collect == "true") { //摄取检测成功
+		if (collect == "true") { //摄取血量检测成功
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
 			_heart->removeTileAt(tileCoord);
 			hero->setUpAnimation();
 			statusLayer->addHeroBlood(15.0f);
-			statusLayer->addPoint(30);
+			return false;
+		}
+	}
+
+	tileGid = _diamond->getTileGIDAt(tileCoord);
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collect = propValueMap["isCollectablePoint"].asString();
+
+		if (collect == "true") { //摄取分数检测成功
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
+			_diamond->removeTileAt(tileCoord);
+			statusLayer->addPoint(80);
+			return false;
+		}
+	}
+
+	tileGid = _speed->getTileGIDAt(tileCoord);
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collect = propValueMap["isCollectableSpeed"].asString();
+
+		if (collect == "true") { //摄取速度检测成功
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
+			_speed->removeTileAt(tileCoord);
+			hero->setMoveSpeed(hero->getMoveSpeed()+0.2);
+			return false;
+		}
+	}
+
+	tileGid = _end->getTileGIDAt(tileCoord);
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collect = propValueMap["isEnd"].asString();
+
+		if (collect == "true") { //终点检测成功
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
+			statusLayer->changeToWinScene();
 			return false;
 		}
 	}
@@ -277,6 +368,7 @@ bool localPlay::detectPlayerPosition(Vec2 position)
 	}
 	return true;
 }
+
 void localPlay::setPlayerPosition(Vec2 position)
 {
 	if (detectPlayerPosition(position))
@@ -335,8 +427,8 @@ void localPlay::onEnter()
 	keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		this->keyStatus[keyCode] = true;
-		//单次按下相应
-		if (keyCode == EventKeyboard::KeyCode::KEY_K && hero->getAttackMode())
+		//单次按下响应
+		if (keyCode == EventKeyboard::KeyCode::KEY_J && hero->getAttackMode())
 		{
 			auto bulletTemp = Bullet::create();
 			bulletTemp->initBulletSprite(hero);

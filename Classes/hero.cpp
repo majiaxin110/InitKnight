@@ -10,7 +10,7 @@ Hero::Hero()
 	attackPower = 1;
 	heroDirection = 0;
 	cHeroSprite = nullptr;
-	moveSpeed = 1.7f;
+	moveSpeed = 1.6f;
 	heroface = 1;
 	attackMode = 0;
 }

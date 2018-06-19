@@ -48,7 +48,7 @@ void ScoreScene::getScore(int sc)
 	scoreLabel->setPosition(Vec2(visibleSize.width / 2+40, visibleSize.height / 2+30));
 	this->addChild(scoreLabel,1);
 
-	uploadScore();
+	//uploadScore();
 }
 
 int ScoreScene::uploadScore()

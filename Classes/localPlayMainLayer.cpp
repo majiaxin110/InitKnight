@@ -154,8 +154,11 @@ void localPlay::onPress(EventKeyboard::KeyCode keyCode)
 		playerPos.x += movSpeed;
 		break;
 	case EventKeyboard::KeyCode::KEY_J:
-		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/sword.wav");
-		hero->setAttackAnimation();
+		if (!hero->getAttackMode())
+		{
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/sword.wav");
+			hero->setAttackAnimation();
+		}
 		break;
 	
 	default:
@@ -226,7 +229,7 @@ bool localPlay::detectPlayerPosition(Vec2 position)
 					this->statusLayer->removeOldNPCDialog();
 					break;
 				case EventKeyboard::KeyCode::KEY_X:
-					hero->setMoveSpeed(hero->getMoveSpeed() * 2);
+					hero->setMoveSpeed(hero->getMoveSpeed() * 1.5);
 					Director::getInstance()->getEventDispatcher()->removeEventListener(keyboardListenerTalkOld);
 					this->statusLayer->removeOldNPCDialog();
 					break;
@@ -254,6 +257,7 @@ bool localPlay::detectPlayerPosition(Vec2 position)
 				case EventKeyboard::KeyCode::KEY_Y:
 					//获取道具
 					//键盘监听
+					statusLayer->addPoint(1000);
 					Director::getInstance()->getEventDispatcher()->removeEventListener(keyboardListenerTalkOld);
 					this->statusLayer->removePaoNPCDialog();
 					break;
@@ -332,7 +336,7 @@ void localPlay::onEnter()
 	{
 		this->keyStatus[keyCode] = true;
 		//单次按下相应
-		if (keyCode == EventKeyboard::KeyCode::KEY_K)
+		if (keyCode == EventKeyboard::KeyCode::KEY_K && hero->getAttackMode())
 		{
 			auto bulletTemp = Bullet::create();
 			bulletTemp->initBulletSprite(hero);
@@ -341,6 +345,8 @@ void localPlay::onEnter()
 			bulletVec.push_back(bulletTemp);
 			bulletTemp->StartListen();
 		}
+		if (keyCode == EventKeyboard::KeyCode::KEY_Q)
+			this->hero->changeAttackMode();
 		log("%d pressed", keyCode);
 	};
 

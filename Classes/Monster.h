@@ -52,6 +52,9 @@ public:
 	void heroCutMonsterBlood(float delta);//干掉怪物血
 	bool getHurt(float delta);
 
+	float getSense();
+	void setSense(float sens);
+
 	ProgressView*  Monster_xue;//怪物血条  
 	localStatus* nowStatus;//当前状态层
 
@@ -64,6 +67,8 @@ private:
 	Hero* my_hero;//当前英雄  
 	Node* my_map;//当前地图  
 	float dis;//当前怪物和英雄的距离  
+
+	float sense;//怪物探知英雄距离
 
 	float power;//怪物攻击威力
 };

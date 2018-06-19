@@ -4,7 +4,7 @@ USING_NS_CC;
 
 Bullet::Bullet()
 {
-	speed = 200;
+	speed = 400;
 	power = 1;
 	bulletname = NULL;
 	ifexist = 1;

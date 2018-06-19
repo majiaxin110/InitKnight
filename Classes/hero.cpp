@@ -10,8 +10,9 @@ Hero::Hero()
 	attackPower = 1;
 	heroDirection = 0;
 	cHeroSprite = nullptr;
-	moveSpeed = 1.5f;
+	moveSpeed = 1.7f;
 	heroface = 1;
+	attackMode = 0;
 }
 
 void Hero::initHeroSprite()
@@ -30,7 +31,18 @@ void Hero::changeAttackMode()
 	attackMode = !attackMode;
 	//更换贴图
 	this->removeChild(cHeroSprite, TRUE);//把原来的精灵删除掉  
-
+	if (attackMode)
+	{
+		this->cHeroSprite = Sprite::create("knightWithGun.png");
+		this->addChild(cHeroSprite);
+		this->cHeroSprite->setFlippedX(heroDirection);
+	}
+	else
+	{
+		this->cHeroSprite = Sprite::create("knight.png");
+		this->addChild(cHeroSprite);
+		this->cHeroSprite->setFlippedX(heroDirection);
+	}
 }
 
 void Hero::setRunAnimation(bool runDirection)
@@ -47,7 +59,11 @@ void Hero::setRunAnimation(bool runDirection)
 	log("run move anime");
 	for (int i = 1; i <= 4; i++)
 	{
-		__String *frameName = __String::createWithFormat("knightAnime/run_%d.png", i);
+		__String *frameName;
+		if(attackMode)
+			frameName = __String::createWithFormat("knightAnime/runWithGun_%d.png", i);
+		else
+			frameName = __String::createWithFormat("knightAnime/run_%d.png", i);
 		//SpriteFrame *spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName->getCString());
 		animation->addSpriteFrameWithFile(frameName->getCString());
 	}
@@ -85,22 +101,22 @@ void  Hero::setAttackAnimation()
 {
 	if (isAttacking || cHeroSprite->getNumberOfRunningActions() > 0)
 		return;
-	CCAnimation* animation = CCAnimation::create();
+	Animation* animation = Animation::create();
 	for (int i = 1; i <= 4; i++)
 	{
 		char szName[100] = { 0 };
 		sprintf(szName, "knightAnime/attackKnife_%d.png", i);
-		animation->addSpriteFrameWithFileName(szName); //加载动画的帧    
+		animation->addSpriteFrameWithFile(szName); //加载动画的帧    
 	}
 	animation->setDelayPerUnit(2.0f / 14.0f);
 	animation->setRestoreOriginalFrame(true);
 	animation->setLoops(1); //动画循环1次    
 							//将动画包装成一个动作  
-	CCAnimate* act = CCAnimate::create(animation);
+	Animate* act = Animate::create(animation);
 	//创建回调动作，攻击结束后调用AttackEnd()  
-	CCCallFunc* callFunc = CCCallFunc::create(this, callfunc_selector(Hero::AttackEnd));
+	CallFunc* callFunc = CallFunc::create(this, callfunc_selector(Hero::AttackEnd));
 	//创建连续动作  
-	CCActionInterval* attackact = CCSequence::create(act, callFunc, NULL);
+	ActionInterval* attackact = Sequence::create(act, callFunc, NULL);
 
 	cHeroSprite->runAction(attackact);
 	isAttacking = true;
@@ -110,8 +126,11 @@ void Hero::AttackEnd()
 {
 	//恢复精灵原来的初始化贴图   
 	this->removeChild(cHeroSprite, TRUE);//把原来的精灵删除掉  
-	cHeroSprite = CCSprite::create("knight.png");//恢复精灵原来的贴图样子  
-	cHeroSprite->setFlipX(heroDirection);  //增加！
+	if (attackMode)
+		cHeroSprite = Sprite::create("knightWithGun.png");
+	else
+		cHeroSprite = Sprite::create("knight.png");//恢复精灵原来的贴图样子    
+	cHeroSprite->setFlippedX(heroDirection);  //增加！
 	this->addChild(cHeroSprite);
 	isAttacking = false;
 }
@@ -143,7 +162,10 @@ void Hero::stopAllAnimation()
 		return;
 	cHeroSprite->stopActionByTag(101);
 	this->removeChild(cHeroSprite, TRUE);//把原来的精灵删除掉  
-	cHeroSprite = Sprite::create("knight.png");//恢复精灵原来的贴图样子  
+	if(attackMode)
+		cHeroSprite = Sprite::create("knightWithGun.png");
+	else
+		cHeroSprite = Sprite::create("knight.png");//恢复精灵原来的贴图样子  
 	cHeroSprite->setFlippedX(heroDirection);
 	this->addChild(cHeroSprite);
 	isMoving = false;
@@ -152,5 +174,10 @@ void Hero::stopAllAnimation()
 void Hero::setMoveSpeed(float currentSpeed)
 {
 	moveSpeed = currentSpeed;
+}
+
+bool Hero::getAttackMode()
+{
+	return attackMode;
 }
 

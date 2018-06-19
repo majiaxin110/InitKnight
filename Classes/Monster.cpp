@@ -124,16 +124,16 @@ void Monster::FollowRun(Hero* m_hero, Node* m_map)
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
 
-	if (dis >= 100)//当怪物与英雄距离超过100
+	if (dis >= 200)//当怪物与英雄距离超过100
 		return;
-	if (dis <= 64)//在怪物攻击范围内，怪物停止移动  
+	if (dis <= 150)//在怪物攻击范围内，怪物停止移动  
 	{
 		this->StopAnimation();//停止跑动
 		JudgeAttack();//必定攻击怪物
 		return;
 	}
 
-	if (x<-64)//判断怪物横坐标和英雄的距离  
+	if (x<-150)//判断怪物横坐标和英雄的距离  
 	{
 
 		MonsterDirecton = true;
@@ -144,7 +144,7 @@ void Monster::FollowRun(Hero* m_hero, Node* m_map)
 		this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  
 
 	}
-	else if (x>64)
+	else if (x>150)
 	{
 
 		MonsterDirecton = false;
@@ -154,7 +154,7 @@ void Monster::FollowRun(Hero* m_hero, Node* m_map)
 		this->setPosition(this->getPositionX() + 1, this->getPositionY());
 		this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  
 	}
-	else if (x <= 64)//怪物橫坐標和英雄相差在64以内时，开始移动怪物纵坐标  
+	else if (x <= 150)//怪物橫坐標和英雄相差在64以内时，开始移动怪物纵坐标  
 	{
 
 		if (m_hero->getPositionY()>this->getPositionY())
@@ -212,7 +212,7 @@ void Monster::heroCutMonsterBlood(float delta)//英雄干掉怪物血
 
 void  Monster::MonsterSeeRun()
 {
-	if (dis<100)
+	if (dis<200)
 		return;
 	this->SetAnimation("monster1/monsterwalk", 6, MonsterDirecton);//播放动画  
 	MoveBy *moveby1;
@@ -250,7 +250,7 @@ void Monster::updateMonster(float delta)
 	float y = my_hero->getPositionY() - (this->getPositionY() + my_map->getPositionY());
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
-	if (dis >= 100)
+	if (dis >= 200)
 	{
 		if (!IsRunning)
 			MonsterSeeRun();
@@ -259,7 +259,7 @@ void Monster::updateMonster(float delta)
 
 void Monster::update(float delta)
 {
-	if (dis < 100)//当英雄在它的可视范围内，不断追着英雄  
+	if (dis < 200)//当英雄在它的可视范围内，不断追着英雄  
 		FollowRun(my_hero, my_map);
 }
 
@@ -271,4 +271,14 @@ void Monster::getBloodStatus(localStatus* nowStatus1)
 bool Monster::getHurt(float delta)
 {
 	return Monster_xue->cutBlood(delta);
+}
+
+float Monster::getSense()
+{
+	return sense;
+}
+
+void Monster::setSense(float sens)
+{
+	sense = sens;
 }

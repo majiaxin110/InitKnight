@@ -29,7 +29,7 @@ bool localStatus::init()
 	this->addChild(cBloodProgress, 101);
 
 	auto pointTip = ui::ImageView::create("pointTip.png");
-	pointTip->setPosition(Vec2(visibleSize.width - 120, visibleSize.height - 55));
+	pointTip->setPosition(Vec2(visibleSize.width - 150, visibleSize.height - 55));
 	this->addChild(pointTip, 101);
 
 	playerPoint = 0;
@@ -88,20 +88,20 @@ void localStatus::addPoint(int add)
 
 void localStatus::changeToLoseScene()
 {
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	auto loseScene = ScoreScene::create();
 	loseScene->putBackImage("loseBackground.png");
 	loseScene->getScore(playerPoint);
 	auto reScene = TransitionFade::create(1.0f, loseScene);
-	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	Director::getInstance()->replaceScene(reScene);
 }
 
 void localStatus::changeToWinScene()
 {
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	auto winScene = ScoreScene::create();
 	winScene->putBackImage("winBackground.png");
 	winScene->getScore(playerPoint);
 	auto reScene = TransitionFade::create(1.0f, winScene);
-	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	Director::getInstance()->replaceScene(reScene);
 }

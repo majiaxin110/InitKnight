@@ -33,7 +33,7 @@ void ScoreScene::putBackImage(const char* backImage)
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	auto imageBackground = ui::ImageView::create("loseBackground.png");
+	auto imageBackground = ui::ImageView::create(backImage);
 	imageBackground->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	this->addChild(imageBackground,0);
 }
@@ -45,10 +45,10 @@ void ScoreScene::getScore(int sc)
 	auto scoreLabel = Label::createWithTTF(std::to_string(playerScore), "fonts/Deng.ttf", 50);
 	scoreLabel->setTextColor(Color4B::ORANGE);
 	scoreLabel->enableShadow(Color4B(200,200,200,90));
-	scoreLabel->setPosition(Vec2(visibleSize.width / 2+30, visibleSize.height / 2+30));
+	scoreLabel->setPosition(Vec2(visibleSize.width / 2+40, visibleSize.height / 2+30));
 	this->addChild(scoreLabel,1);
 
-	uploadScore();
+	//uploadScore();
 }
 
 int ScoreScene::uploadScore()

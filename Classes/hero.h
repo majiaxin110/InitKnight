@@ -22,7 +22,9 @@ public:
 	float getMoveSpeed();
 	void setMoveSpeed(float currentSpeed);
 
+	bool getAttackMode();
 	void changeAttackMode();
+
 	void initHeroSprite();
 	void setRunAnimation(bool runDirection = 0);
 	//void setAttackAnimation();

@@ -18,18 +18,18 @@ bool localStatus::init()
 	KnightHead->setTag(100);
 	this->addChild(KnightHead);
 	
+	auto progressVie = new ProgressView;
+	cBloodProgress.push_back(progressVie);
+	cBloodProgress[0]->setPosition(Vec2(214, visibleSize.height - 50));
+	cBloodProgress[0]->initProgressView("bloodProgress/KnightBack.png","bloodProgress/KnightFore.png");
 
-	cBloodProgress = new ProgressView;
-	cBloodProgress->setPosition(Vec2(214, visibleSize.height - 50));
-	cBloodProgress->initProgressView("bloodProgress/KnightBack.png","bloodProgress/KnightFore.png");
-
-	cBloodProgress->setScale(1.0f);
-	cBloodProgress->setTotalProgress(100.0f);
-	cBloodProgress->setCurrentProgress(20.0f);
-	this->addChild(cBloodProgress, 101);
+	cBloodProgress[0]->setScale(1.0f);
+	cBloodProgress[0]->setTotalProgress(100.0f);
+	cBloodProgress[0]->setCurrentProgress(20.0f);
+	this->addChild(cBloodProgress[0], 101);
 
 	auto pointTip = ui::ImageView::create("pointTip.png");
-	pointTip->setPosition(Vec2(visibleSize.width - 120, visibleSize.height - 55));
+	pointTip->setPosition(Vec2(visibleSize.width - 150, visibleSize.height - 55));
 	this->addChild(pointTip, 101);
 
 	playerPoint = 0;
@@ -43,7 +43,7 @@ bool localStatus::init()
 bool localStatus::cutHeroBlood(float amount)
 {
 	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHurt.mp3");
-	bool isDied = cBloodProgress->cutBlood(amount);
+	bool isDied = cBloodProgress[0]->cutBlood(amount);//!
 	if (isDied)
 		changeToLoseScene();
 	return isDied;
@@ -51,7 +51,7 @@ bool localStatus::cutHeroBlood(float amount)
 
 void localStatus::addHeroBlood(float amount)
 {
-	return cBloodProgress->addBlood(amount);
+	return cBloodProgress[0]->addBlood(amount);
 }
 
 void localStatus::showOldNPCDialog()
@@ -88,20 +88,20 @@ void localStatus::addPoint(int add)
 
 void localStatus::changeToLoseScene()
 {
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	auto loseScene = ScoreScene::create();
 	loseScene->putBackImage("loseBackground.png");
 	loseScene->getScore(playerPoint);
 	auto reScene = TransitionFade::create(1.0f, loseScene);
-	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	Director::getInstance()->replaceScene(reScene);
 }
 
 void localStatus::changeToWinScene()
 {
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	auto winScene = ScoreScene::create();
 	winScene->putBackImage("winBackground.png");
 	winScene->getScore(playerPoint);
 	auto reScene = TransitionFade::create(1.0f, winScene);
-	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	Director::getInstance()->replaceScene(reScene);
 }

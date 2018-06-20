@@ -58,7 +58,23 @@ bool HelloWorld::init()
 	singleModeButton->setPressedActionEnabled(true);
 	this->addChild(singleModeButton, 1);
 
-	
+	auto doubleModeButton = ui::Button::create("buttonDouble.png");
+	doubleModeButton->setPosition(Vec2(origin.x + visibleSize.width / 3*2, origin.y + visibleSize.height / 3));
+
+	//利用lambda表达式处理单击
+	doubleModeButton->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
+		log("Double Local Play Mode");
+		switch (type)
+		{
+		case ui::Widget::TouchEventType::BEGAN:
+			log("switch scene");
+			break;
+		default:
+			break;
+		}
+	});
+	doubleModeButton->setPressedActionEnabled(true);
+	this->addChild(doubleModeButton, 1);
 
 	//背景音乐开关
 	auto *chnStrings = Dictionary::createWithContentsOfFile("string.xml");

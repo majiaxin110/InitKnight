@@ -5,6 +5,7 @@
 #include "bloodProgress.h"
 #include "hero.h"
 #include <string>
+#include <map>
 
 USING_NS_CC;
 
@@ -35,14 +36,14 @@ public:
 	//英雄运动的方向  
 	bool MonsterDirecton;
 
-	void FollowRun(Hero* m_hero, Node* m_map);
+	void FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map);
 	//判断是否攻击  
 	void JudgeAttack();
 	//怪物巡逻路线  
 	void MonsterSeeRun();
 
 	//怪物启动监听英雄  
-	void StartListen(Hero* m_hero, Node* m_map);
+	void StartListen(Hero* m_hero, cocos2d::TMXTiledMap* m_map);
 	//监听函数,每隔2秒检测下，计算英雄与怪物的距离  
 	void updateMonster(float delta);
 	//更新函数，如果英雄在可视范围内，不断触发  
@@ -51,6 +52,12 @@ public:
 	void cutHeroBlood(float delta);//干掉英雄血
 	void heroCutMonsterBlood(float delta);//干掉怪物血
 	bool getHurt(float delta);
+	bool detectMonsterPosition(Vec2 position);
+
+
+	cocos2d::TMXTiledMap* my_map;
+	cocos2d::TMXLayer* _collidable;
+	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);
 
 	float getSense();
 	void setSense(float sens);
@@ -65,7 +72,9 @@ private:
 	std::string Monster_name;//用来保存初始状态的精灵图片名称  
 
 	Hero* my_hero;//当前英雄  
-	Node* my_map;//当前地图  
+	//Node* my_map;//当前地图  
+
+
 	float dis;//当前怪物和英雄的距离  
 
 	float senseDistance;//怪物探知英雄距离

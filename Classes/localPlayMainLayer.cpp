@@ -216,7 +216,6 @@ bool localPlay::detectPlayerPosition(Vec2 position)
 {
 	//从像素点坐标转化为瓦片坐标
 	Vec2 tileCoord = this->tileCoordFromPosition(position);
-
 	//获得瓦片的GID
 	int tileGid = _collidable->getTileGIDAt(tileCoord);
 

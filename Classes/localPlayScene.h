@@ -8,6 +8,7 @@ class localScene : public cocos2d::Scene
 public:
 	static cocos2d::Scene* createScene();
 
+	//void transPlayerName(const char* name);
 	virtual bool init();
 
 	// implement the "static create()" method maddnually

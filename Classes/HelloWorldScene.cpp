@@ -29,11 +29,24 @@ bool HelloWorld::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+
 	//背景图片
 	auto backGround = Sprite::create("helloBackgroud.png");
 	backGround->setPosition(Vec2(origin.x + visibleSize.width / 2
 		, origin.y + visibleSize.height / 2));
 	this->addChild(backGround,0);
+
+	/*//玩家名输入
+	auto nameEdit = ui::EditBox::create(Size(120, 30), "whiteBox.png");
+	nameEdit->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 10));
+	nameEdit->setPlaceHolder("Your Name Here");
+	nameEdit->setPlaceholderFontColor(Color3B::BLACK);
+	nameEdit->setPlaceholderFontSize(15);
+	nameEdit->setFontColor(Color3B::BLACK);
+	nameEdit->setFontSize(15);
+	auto s = Size(200, 40);  //设置编辑框大小
+	nameEdit->setContentSize(s);
+	this->addChild(nameEdit, 5);*/
 
 	//选择按钮
 	auto singleModeButton = ui::Button::create("buttonSingle.png");
@@ -44,6 +57,7 @@ bool HelloWorld::init()
 		log("Single Local Play Mode");
 		auto locScene = localScene::create();
 		locScene->setTag(579);
+		//locScene->transPlayerName(nameEdit->getText());
 		auto reScene = TransitionFade::create(1.0f, locScene);
 		switch (type)
 		{
@@ -80,7 +94,7 @@ bool HelloWorld::init()
 	auto *chnStrings = Dictionary::createWithContentsOfFile("string.xml");
 	const char *strMusic = ((__String*)chnStrings->objectForKey("music"))->getCString();
 	auto musicLabel = Label::createWithTTF(strMusic, "fonts/Deng.ttf",20);
-	musicLabel->setPosition(Vec2(origin.x + 60, origin.y + 120));
+	musicLabel->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + 120));
 	this->addChild(musicLabel, 1);
 
 	auto musicCheck = ui::CheckBox::create("unCheckBox.png","CheckBox.png");
@@ -103,7 +117,7 @@ bool HelloWorld::init()
 	CocosDenshion::SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.3f);//设置音量
 	musicCheck->setSelected(true);
 	this->addChild(musicCheck, 1);
-	
+
     return true;
 }
 

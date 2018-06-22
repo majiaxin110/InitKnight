@@ -2,6 +2,7 @@
 #include "cocos2d.h"  
 #include "bloodProgress.h"
 #include <vector>
+#include <string>
 
 USING_NS_CC;
 
@@ -11,6 +12,7 @@ private:
 	std::vector<ProgressView*> cBloodProgress;
 	Label* pointLabel;
 	int playerPoint;
+	std::string playerName;
 public:
 	virtual bool init();
 
@@ -18,6 +20,7 @@ public:
 	void addHeroBlood(float amount);
 
 	void addPoint(int add);//增加得分
+	void setPlayerName(const char* str);
 
 	//与NPC对话的图形
 	void showOldNPCDialog();

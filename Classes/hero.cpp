@@ -158,6 +158,7 @@ void Hero::setUpAnimation()
 }
 void Hero::stopAllAnimation()
 {
+	isAttacking = false;
 	if (!isMoving)
 		return;
 	cHeroSprite->stopActionByTag(101);

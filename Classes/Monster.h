@@ -62,6 +62,8 @@ public:
 	float getSense();
 	void setSense(float sens);
 
+	void setPower(float cPower);
+
 	ProgressView*  Monster_xue;//怪物血条  
 	localStatus* nowStatus;//当前状态层
 

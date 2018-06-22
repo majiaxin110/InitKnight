@@ -59,7 +59,7 @@ float ProgressView::getTotalProgress() const
 
 bool ProgressView::cutBlood(float cutAmount)
 {
-	if (currentBlood - cutAmount < 0)
+	if (currentBlood - cutAmount <= 0)
 	{
 		currentBlood = 0;
 		setCurrentProgress(currentBlood);

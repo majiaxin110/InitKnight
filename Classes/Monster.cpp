@@ -8,7 +8,8 @@ Monster::Monster(void)
 	MonsterDirecton = TRUE;//向右运动  
 	IsAttack = false;
 	Monster_xue = NULL; //后面初始化
-	senseDistance = 200; //追踪距离
+	senseDistance = 160; //追踪距离
+	power = 0.5;
 }
 
 Monster::~Monster(void)
@@ -247,7 +248,7 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 																	//this->setPosition(this->getPositionX() + 0.8, this->getPositionY());
 																	//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 		}
-		else if (x <= 64)//怪物橫坐標和英雄相差在64以内时，开始移动怪物纵坐标  
+		else if (x <= 64)//怪物横坐标和英雄相差在64以内时，开始移动怪物纵坐标  
 		{
 
 			if (m_hero->getPositionY() > this->getPositionY()&& detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY() + 32)))  //上下
@@ -302,7 +303,7 @@ void Monster::JudgeAttack()//判定攻击
 void Monster::cutHeroBlood(float delta)
 {
 	if (IsAttack == 1)  //怪物若正在攻击
-		nowStatus->cutHeroBlood(0.7);  //干掉血
+		nowStatus->cutHeroBlood(power);  //干掉血
 }
 
 void Monster::heroCutMonsterBlood(float delta)//英雄干掉怪物血
@@ -406,6 +407,11 @@ void Monster::setSense(float sens)
 	senseDistance = sens;
 }
 
+void Monster::setPower(float cPower)
+{
+	power = cPower;
+}
+
 bool Monster::detectMonsterPosition(Vec2 position)  //侦测碰撞，照英雄那个改的
 {
 	//从像素点坐标转化为瓦片坐标
@@ -413,7 +419,7 @@ bool Monster::detectMonsterPosition(Vec2 position)  //侦测碰撞，照英雄那个改的
 
 	//获得瓦片的GID
 	int tileGid = _collidable->getTileGIDAt(tileCoord);
-	log("nimannima %d", tileGid);
+	//log("nimannima %d", tileGid);
 	if (tileGid > 0)
 	{
 		Value prop = my_map->getPropertiesForGID(tileGid);

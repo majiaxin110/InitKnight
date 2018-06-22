@@ -1,6 +1,7 @@
 #include "localPlayMainLayer.h"
 
 USING_NS_CC;
+#define MonsterAmount 5
 const int tileSize = 32;//瓦片大小
 
 // on "init" you need to initialize your instance
@@ -30,7 +31,7 @@ bool localPlay::init()
 	hero->setPosition(Vec2(x, y));
 	addChild(hero, 2, 200);
 
-	for (int i = 1; i <= 2; i++)
+	for (int i = 1; i <= MonsterAmount; i++)
 	{
 		TMXObjectGroup* monsterGroup = _tileMap->getObjectGroup("monsterSp1");
 		ValueMap spawnPointMonster = monsterGroup->getObject(std::to_string(i));
@@ -41,13 +42,14 @@ bool localPlay::init()
 		auto monster1 = Monster::create();
 		monster1->InitMonsterSprite("monster1", "bloodBack.png", "bloodFore.png",250.0f);
 		monster1->setPosition(Vec2(monsterX, monsterY));
+		monster1->setPower(1.0f);
 		this->addChild(monster1, 2);
 		monsterVec.push_back(monster1);
 		monster1->StartListen(hero, _tileMap);
 	}
 
 	//第二类怪物
-	for (int i = 1; i <= 2; i++)
+	for (int i = 1; i <= MonsterAmount; i++)
 	{
 		TMXObjectGroup* monsterGroup = _tileMap->getObjectGroup("monsterSp2");
 		ValueMap spawnPointMonster = monsterGroup->getObject(std::to_string(i));
@@ -58,7 +60,7 @@ bool localPlay::init()
 		auto monster2 = Monster::create();
 		monster2->InitMonsterSprite("monster2", "bloodBack.png", "bloodFore.png", 100.0f);
 		monster2->setPosition(Vec2(monsterX, monsterY));
-		monster2->setSense(monster2->getSense() * 2);
+		monster2->setSense(monster2->getSense() * 1.5);
 		this->addChild(monster2, 2);
 		monsterVec.push_back(monster2);
 		monster2->StartListen(hero, _tileMap);
@@ -139,7 +141,7 @@ void localPlay::update(float delta)
 		{
 			this->removeChild(monsterVec[i]);
 			monsterVec.erase(monsterVec.begin() + i);
-			statusLayer->addPoint(100);
+			statusLayer->addPoint(180);
 		}
 		for (auto &j : bulletVec)
 		{
@@ -275,7 +277,7 @@ bool localPlay::detectPlayerPosition(Vec2 position)
 		if (collect == "true") { //摄取速度检测成功
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.mp3");
 			_speed->removeTileAt(tileCoord);
-			hero->setMoveSpeed(hero->getMoveSpeed()+0.2);
+			hero->setMoveSpeed(hero->getMoveSpeed()+0.3);
 			return false;
 		}
 	}
@@ -436,6 +438,7 @@ void localPlay::onEnter()
 			this->addChild(bulletTemp);
 			bulletVec.push_back(bulletTemp);
 			bulletTemp->StartListen();
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/gunFire.wav");
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_Q)
 			this->hero->changeAttackMode();

@@ -42,8 +42,7 @@ bool localStatus::init()
 
 bool localStatus::cutHeroBlood(float amount)
 {
-	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHurt.mp3");
-	bool isDied = cBloodProgress[0]->cutBlood(amount);//!
+	bool isDied = cBloodProgress[0]->cutBlood(amount);
 	if (isDied)
 		changeToLoseScene();
 	return isDied;
@@ -85,13 +84,19 @@ void localStatus::addPoint(int add)
 	pointLabel->setString(std::to_string(playerPoint));
 }
 
+void localStatus::setPlayerName(const char * str)
+{
+	playerName.assign(str);
+}
+
 
 void localStatus::changeToLoseScene()
 {
 	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	auto loseScene = ScoreScene::create();
 	loseScene->putBackImage("loseBackground.png");
-	loseScene->getScore(playerPoint);
+	log("!!set %s", playerName.c_str());
+	loseScene->setScore(playerPoint);
 	auto reScene = TransitionFade::create(1.0f, loseScene);
 	Director::getInstance()->replaceScene(reScene);
 }
@@ -101,7 +106,7 @@ void localStatus::changeToWinScene()
 	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
 	auto winScene = ScoreScene::create();
 	winScene->putBackImage("winBackground.png");
-	winScene->getScore(playerPoint);
+	winScene->setScore(playerPoint);
 	auto reScene = TransitionFade::create(1.0f, winScene);
 	Director::getInstance()->replaceScene(reScene);
 }

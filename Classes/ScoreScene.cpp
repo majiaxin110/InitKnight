@@ -3,6 +3,7 @@
 #include <stdio.h>  
 #include <stdlib.h>  
 #include <WinSock2.h>  
+
 USING_NS_CC;
 
 Scene* ScoreScene::createScene()
@@ -22,9 +23,8 @@ bool ScoreScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	this->statusShow = Label::createWithTTF("new", "fonts/Deng.ttf", 60);
-	statusShow->setPosition(Vec2(visibleSize.width / 2, 40));
-	this->addChild(statusShow,3);
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
+
 	return true;
 }
 
@@ -38,34 +38,49 @@ void ScoreScene::putBackImage(const char* backImage)
 	this->addChild(imageBackground,0);
 }
 
-void ScoreScene::getScore(int sc)
+void ScoreScene::setScore(int sc)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	playerScore = sc;
+	//playerName.assign(str);
 	auto scoreLabel = Label::createWithTTF(std::to_string(playerScore), "fonts/Deng.ttf", 50);
 	scoreLabel->setTextColor(Color4B::ORANGE);
 	scoreLabel->enableShadow(Color4B(200,200,200,90));
-	scoreLabel->setPosition(Vec2(visibleSize.width / 2+40, visibleSize.height / 2+30));
+	scoreLabel->setPosition(Vec2(visibleSize.width / 2+85, visibleSize.height / 2-90));
 	this->addChild(scoreLabel,1);
-
-	//uploadScore();
 }
 
-int ScoreScene::uploadScore()
+int ScoreScene::getPlayerScore()
 {
+	return playerScore;
+}
+
+cocos2d::Label * ScoreScene::getStatusShow()
+{
+	return statusShow;
+}
+
+/*void uploadScore(std::string name, int score)
+{
+	std::string pName[5];
+	std::string pScore[5];
+
+	log("current name and score :%s %d", name.c_str(), score);
+
 	SOCKET clientsocket;
 	SOCKADDR_IN serveraddr;
 	SOCKADDR_IN clientaddr;
 	char buf[1024];
-	strcpy(buf, (std::to_string(playerScore)).c_str());
+	strcpy(buf, (std::to_string(score).c_str()));
 	WSADATA wsa;
 	WSAStartup(MAKEWORD(2, 0), &wsa); //初始化WS2_32.DLL  
 
 									  //创建套接字
 	if ((clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) <= 0)
 	{
-		statusShow->setString("socket failed");
-		return -1;
+		log("socket failed");
+		//scene->getStatusShow()->setString("socket failed");
+		//return -1;
 	}
 
 	serveraddr.sin_family = AF_INET;
@@ -73,34 +88,63 @@ int ScoreScene::uploadScore()
 	serveraddr.sin_addr.S_un.S_addr = inet_addr("118.25.141.206");//服务器大法好！！
 
 																  //请求连接  
-	statusShow->setString("try to connect...");
+	//scene->getStatusShow()->setString("try to connect...");
+	log("try to connect..");
 	if (connect(clientsocket, (SOCKADDR *)&serveraddr, sizeof(serveraddr)) != 0)
 	{
-		statusShow->setString("connect failed");
-		return -1;
+		//scene->getStatusShow()->setString("connect failed");
+		log("connect failed");
+		//return -1;
+		return;
 	}
-	statusShow->setString("connect success!");
+	//scene->getStatusShow()->setString("connect success!");
 
-	//发送数据  
-	statusShow->setString("sending...");
-	if (send(clientsocket, buf, strlen(buf) + 1, 0) <= 0)
+	//发送数据
+	//scene->getStatusShow()->setString("sending...");
+	log("sending..");
+	if (send(clientsocket, name.c_str(), name.size() + 1, 0) <= 0)
 	{
-		printf("发送错误!\n");
+		log("error send name !");
+		return;
 	}
 
-	/*接收数据  
-	while (1) {
+	if (send(clientsocket, std::to_string(score).c_str(), std::to_string(score).size() + 1, 0) <= 0)
+	{
+		log("error send score");
+		return;
+	}
+	
+	for(int i=0;i<5;i++)
+	{
 		if (recv(clientsocket, buf, 1024, 0) <= 0)
 		{
-			printf("关闭连接!\n");
+			log("close connection\n");
 			closesocket(clientsocket);
 		}
-		printf("接收来自服务器的信息: %s\n", buf);
-		break;
+		log("receive name: %s", buf);
+
+		pName[i].assign(buf);
+
+		if (recv(clientsocket, buf, 1024, 0) <= 0)
+		{
+			log("close connection !");
+			closesocket(clientsocket);
+		}
+		log("receive score : %s", buf);
+
+		pScore[i].assign(buf);
 	}
-	//关闭套接字  */
+
+	//关闭套接字  
 	closesocket(clientsocket);
 	WSACleanup();    //释放WS2_32.DLL  
 	//system("pause");
-	return true;
+	//return true;
+	return;
 }
+
+void ScoreScene::onExit()
+{
+//	scoThread->join();
+//	CC_SAFE_DELETE(scoThread);
+}*/

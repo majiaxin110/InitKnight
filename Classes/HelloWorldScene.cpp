@@ -2,6 +2,8 @@
 #include "SimpleAudioEngine.h"
 #include "localPlayScene.h"
 #include "ui/CocosGUI.h"
+#include "OnlineServerScene.h"
+#include "OnlineClientScene.h"
 
 USING_NS_CC;
 
@@ -74,14 +76,17 @@ bool HelloWorld::init()
 
 	auto doubleModeButton = ui::Button::create("buttonDouble.png");
 	doubleModeButton->setPosition(Vec2(origin.x + visibleSize.width / 3*2, origin.y + visibleSize.height / 3));
-
 	//利用lambda表达式处理单击
 	doubleModeButton->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
 		log("Double Local Play Mode");
+		auto serverScene = ServerScene::create();
+		serverScene->setTag(580);
+		auto reScene = TransitionFade::create(1.0f, serverScene);
 		switch (type)
 		{
 		case ui::Widget::TouchEventType::BEGAN:
 			log("switch scene");
+			Director::getInstance()->replaceScene(reScene);
 			break;
 		default:
 			break;
@@ -89,6 +94,28 @@ bool HelloWorld::init()
 	});
 	doubleModeButton->setPressedActionEnabled(true);
 	this->addChild(doubleModeButton, 1);
+
+	auto doubleModeButton2 = ui::Button::create("buttonDouble.png");
+	doubleModeButton2->setPosition(Vec2(origin.x + visibleSize.width / 3 * 2, origin.y + visibleSize.height / 3 * 2));
+	//利用lambda表达式处理单击
+	doubleModeButton2->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
+		log("Double Local Play Mode");
+		auto clientScene = ClientScene::create();
+		clientScene->setTag(581);
+		auto reScene = TransitionFade::create(1.0f, clientScene);
+		switch (type)
+		{
+		case ui::Widget::TouchEventType::BEGAN:
+			log("switch scene");
+			Director::getInstance()->replaceScene(reScene);
+			break;
+		default:
+			break;
+		}
+	});
+	doubleModeButton2->setPressedActionEnabled(true);
+	this->addChild(doubleModeButton2, 1);
+
 
 	//背景音乐开关
 	auto *chnStrings = Dictionary::createWithContentsOfFile("string.xml");

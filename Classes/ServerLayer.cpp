@@ -1,9 +1,9 @@
 #include "ServerLayer.h"
-
+#include <cmath>
 USING_NS_CC;
 const int tileSize = 32;//瓦片大小
 receiveTemp recTemp1;  
-						// on "init" you need to initialize your instance
+
 bool ServerLayer::init()   //初始化地图网络等
 {
 	//////////////////////////////
@@ -16,23 +16,31 @@ bool ServerLayer::init()   //初始化地图网络等
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	_tileMap = TMXTiledMap::create("testMap/bigLocalMap.tmx");
+	_tileMap = TMXTiledMap::create("testMap/fightMap.tmx");
 	addChild(_tileMap, 0, 100);
 
-	TMXObjectGroup* group = _tileMap->getObjectGroup("player");
-	ValueMap spawnPoint = group->getObject("startPoint");
+	TMXObjectGroup* group = _tileMap->getObjectGroup("players");
+	ValueMap spawnPoint = group->getObject("Apoint");
 
 	auto x = spawnPoint["x"].asFloat();
 	auto y = spawnPoint["y"].asFloat();
 
 	hero = Hero::create();
 	hero->initHeroSprite();
-	hero->setPosition(Vec2(x-100, y));
+	hero->addHeadProgress("bloodBack.png", "bloodFore.png",80);
+	hero->setPosition(Vec2(x, y));
+	hero->setMoveSpeed(hero->getMoveSpeed()*1.2);
 	this->addChild(hero, 2, 200);
+
+	spawnPoint = group->getObject("Bpoint");
+	x = spawnPoint["x"].asFloat();
+	y = spawnPoint["y"].asFloat();
 
 	hero2 = Hero::create();
 	hero2->initHeroSprite();
-	hero2->setPosition(Vec2(x+100, y));
+	hero2->addHeadProgress("bloodBack.png", "bloodFore.png",100);
+	hero2->setPosition(Vec2(x, y));
+	hero2->changeAttackMode();
 	this->addChild(hero2, 2, 201);
 	recTemp1.receivePosition = hero2->getPosition();
 
@@ -42,6 +50,7 @@ bool ServerLayer::init()   //初始化地图网络等
 	_collidable = _tileMap->getLayer("barriers");
 	_collidable->setVisible(false);
 
+	_heart = _tileMap->getLayer("heart");
 
 	this->initNetwork();
 	this->scheduleUpdate();
@@ -55,6 +64,8 @@ void ServerLayer::Place(float dt)
 {
 	//log("!!!!%f", receivetemp.x);
 	hero2->setPosition(recTemp1.receivePosition);
+	hero2->setFlipp(recTemp1.heroface == 2 ? 0 : 1);
+	hero2->heroface = recTemp1.heroface;
 }
 
 void ServerLayer::initNetwork()  
@@ -71,6 +82,9 @@ void ServerLayer::sendData(DataType type)
 	data.dataType = type;
 	data.dataSize = sizeof(GameData);
 	data.position = hero->getPosition();
+	data.heroface = hero->heroface;
+	data.hero2Blood = hero2->headProgress->getCurrentProgress();
+	data.heroBlood = hero->headProgress->getCurrentProgress();
 	_server->sendMessage((const char*)&data, sizeof(GameData));
 }
 
@@ -81,6 +95,7 @@ void ServerLayer::onRecv(HSocket socket, const char* data, int count)
 	GameData* gameData = (GameData*)data;
 	if (gameData->dataSize == sizeof(GameData))
 	{
+		//Bullet* bulletTemp;
 		switch (gameData->dataType)
 		{
 	
@@ -88,15 +103,20 @@ void ServerLayer::onRecv(HSocket socket, const char* data, int count)
 			/*//hero2->setPosition(gameData->position);
 			this->hero2->setPosition(gameData->position);*/
 			recTemp1.receivePosition = gameData->position;
+			recTemp1.heroface = gameData->heroface;
 			//log("????%f", receivetemp.x);
 			break;
-
+		case ATTACK:
+			log("receive attack!");
+			recTemp1.isNeedBullet = true;
+			break;
 		default:
 			break;
 		}
 	}
 
 }
+
 
 void ServerLayer::getStatusLayer(localStatus* tLayer)
 {
@@ -134,7 +154,6 @@ void ServerLayer::update(float delta)
 	curTime += delta;
 	if (curTime > delta * 2.f)
 	{
-
 		this->sendData(POSITION);
 		curTime -= delta * 2.f;
 	}
@@ -146,8 +165,52 @@ void ServerLayer::update(float delta)
 		onPress(pressedKey);
 	}
 
-	
+	if (recTemp1.isNeedBullet)
+	{
+		log("!!add bullet");
+		auto bulletTemp = Bullet::create();
+		bulletTemp->initBulletSprite(hero2);
+		bulletTemp->setTag(4088);
+		this->addChild(bulletTemp);
+		bulletVec.push_back(bulletTemp);
+		bulletTemp->StartListen();
+		recTemp1.isNeedBullet = false;
+	}
 
+	for (auto &j : bulletVec)
+	{
+		if (j->ifexist)
+		{
+			float x1 = hero->getPositionX() - j->bulletsprite->getPositionX();
+			//得到两点y的距离 
+			float y1 = hero->getPositionY() - j->bulletsprite->getPositionY();
+			float distance = sqrt(pow(x1, 2) + pow(y1, 2));
+
+			if (distance < 60)
+			{
+				if (hero->headProgress->cutBlood(8))
+					changeToLose();
+				j->removeBulletFromOutside();
+			}
+		}
+	}
+
+	Vec2 tileCoord = this->tileCoordFromPosition(recTemp1.receivePosition);
+	//获得瓦片的GID
+	int tileGid = _heart->getTileGIDAt(tileCoord);
+
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collected = propValueMap["isCollectable"].asString();
+
+		if (collected == "true") { //检测成功
+			_heart->removeTileAt(tileCoord);
+			hero2->headProgress->addBlood(25);
+		}
+	}
 }
 
 void ServerLayer::onPress(EventKeyboard::KeyCode keyCode)
@@ -181,6 +244,13 @@ void ServerLayer::onPress(EventKeyboard::KeyCode keyCode)
 		{
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/sword.wav");
 			hero->setAttackAnimation();
+			float dis = sqrt(pow(hero->getPosition().x - hero2->getPosition().x, 2) +
+				pow(hero->getPosition().y - hero2->getPosition().y, 2));
+			if (hero->isAttacking && dis < 64 &&
+				((hero->heroface == 2 && hero->getPosition().x - hero2->getPosition().x <= 0)
+					|| (hero->heroface == 1 && hero->getPosition().x - hero2->getPosition().x >= 0)))
+				if (hero2->headProgress->cutBlood(1))
+					changeToWin();
 		}
 		break;
 
@@ -209,18 +279,32 @@ bool ServerLayer::detectPlayerPosition(Vec2 position)
 			return false;
 		}
 	}
+
+	tileGid = _heart->getTileGIDAt(tileCoord);
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collect = propValueMap["isCollectable"].asString();
+
+		if (collect == "true") { //收集检测成功
+			hero->headProgress->addBlood(25);
+			_heart->removeTileAt(tileCoord);
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.wav");
+			return false;
+		}
+	}
 	return true;
 }
 
 void ServerLayer::setPlayerPosition(Vec2 position)
 {
-	/*if (detectPlayerPosition(position))
+	if (detectPlayerPosition(position))
 	{
 		//移动精灵
 		hero->setPosition(position);
-
-	}*/
-	hero->setPosition(position);
+	}
 }
 
 Vec2 ServerLayer::tileCoordFromPosition(Vec2 pos)
@@ -295,5 +379,24 @@ void ServerLayer::onEnter()
 
 	EventDispatcher *eventDispatcher = Director::getInstance()->getEventDispatcher();
 	eventDispatcher->addEventListenerWithFixedPriority(keyboardListener, 2);
+
+}
+
+void ServerLayer::changeToWin()
+{
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
+	auto winScene = ScoreScene::create();
+	winScene->putBackImage("fightScore/winBackground.png");
+	auto reScene = TransitionFade::create(1.0f, winScene);
+	Director::getInstance()->replaceScene(reScene);
+}
+
+void ServerLayer::changeToLose()
+{
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
+	auto winScene = ScoreScene::create();
+	winScene->putBackImage("fightScore/loseBackground.png");
+	auto reScene = TransitionFade::create(1.0f, winScene);
+	Director::getInstance()->replaceScene(reScene);
 
 }

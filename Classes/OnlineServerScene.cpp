@@ -10,7 +10,6 @@ Scene* ServerScene::createScene()
 
 bool ServerScene::init()
 {
-	log("local scene init");
 	auto mainLayer = ServerLayer::create();
 	mainLayer->setName("main");
 	/*auto statusLayer = localStatus::create();

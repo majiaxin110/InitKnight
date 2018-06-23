@@ -38,18 +38,6 @@ bool HelloWorld::init()
 		, origin.y + visibleSize.height / 2));
 	this->addChild(backGround,0);
 
-	/*//玩家名输入
-	auto nameEdit = ui::EditBox::create(Size(120, 30), "whiteBox.png");
-	nameEdit->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 10));
-	nameEdit->setPlaceHolder("Your Name Here");
-	nameEdit->setPlaceholderFontColor(Color3B::BLACK);
-	nameEdit->setPlaceholderFontSize(15);
-	nameEdit->setFontColor(Color3B::BLACK);
-	nameEdit->setFontSize(15);
-	auto s = Size(200, 40);  //设置编辑框大小
-	nameEdit->setContentSize(s);
-	this->addChild(nameEdit, 5);*/
-
 	//选择按钮
 	auto singleModeButton = ui::Button::create("buttonSingle.png");
 	singleModeButton->setPosition(Vec2(origin.x + visibleSize.width / 3, origin.y + visibleSize.height / 3));
@@ -74,10 +62,10 @@ bool HelloWorld::init()
 	singleModeButton->setPressedActionEnabled(true);
 	this->addChild(singleModeButton, 1);
 
-	auto doubleModeButton = ui::Button::create("buttonDouble.png");
-	doubleModeButton->setPosition(Vec2(origin.x + visibleSize.width / 3*2, origin.y + visibleSize.height / 3));
+	auto doubleModeButtonServer = ui::Button::create("doubleButtonCreate.png");
+	doubleModeButtonServer->setPosition(Vec2(origin.x + visibleSize.width / 3*2, origin.y + visibleSize.height / 3+35));
 	//利用lambda表达式处理单击
-	doubleModeButton->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
+	doubleModeButtonServer->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
 		log("Double Local Play Mode");
 		auto serverScene = ServerScene::create();
 		serverScene->setTag(580);
@@ -92,13 +80,13 @@ bool HelloWorld::init()
 			break;
 		}
 	});
-	doubleModeButton->setPressedActionEnabled(true);
-	this->addChild(doubleModeButton, 1);
+	doubleModeButtonServer->setPressedActionEnabled(true);
+	this->addChild(doubleModeButtonServer, 1);
 
-	auto doubleModeButton2 = ui::Button::create("buttonDouble.png");
-	doubleModeButton2->setPosition(Vec2(origin.x + visibleSize.width / 3 * 2, origin.y + visibleSize.height / 3 * 2));
+	auto doubleModeButtonClient = ui::Button::create("doubleButtonJoin.png");
+	doubleModeButtonClient->setPosition(Vec2(origin.x + visibleSize.width / 3 * 2, origin.y + visibleSize.height / 3-45));
 	//利用lambda表达式处理单击
-	doubleModeButton2->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
+	doubleModeButtonClient->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
 		log("Double Local Play Mode");
 		auto clientScene = ClientScene::create();
 		clientScene->setTag(581);
@@ -113,8 +101,8 @@ bool HelloWorld::init()
 			break;
 		}
 	});
-	doubleModeButton2->setPressedActionEnabled(true);
-	this->addChild(doubleModeButton2, 1);
+	doubleModeButtonClient->setPressedActionEnabled(true);
+	this->addChild(doubleModeButtonClient, 1);
 
 
 	//背景音乐开关

@@ -97,7 +97,7 @@ void Hero::setRunAnimation(bool runDirection)
 	isAttacking = false;
 }*/
 
-void  Hero::setAttackAnimation()
+void Hero::setAttackAnimation()
 {
 	if (isAttacking || cHeroSprite->getNumberOfRunningActions() > 0)
 		return;
@@ -172,9 +172,24 @@ void Hero::stopAllAnimation()
 	isMoving = false;
 }
 
+void Hero::addHeadProgress(char *xue_back, char* xue_fore, float totalPro)
+{
+	headProgress = new ProgressView();
+	headProgress->setPosition(Vec2(cHeroSprite->getPositionX() + 10, cHeroSprite->getPositionY() + 50));//设置在怪物上头    																											  //Monster_xue->setScale(2.2f);    
+	headProgress->initProgressView(xue_back, xue_fore);
+	headProgress->setTotalProgress(totalPro);
+	headProgress->setCurrentProgress(totalPro);
+	this->addChild(headProgress);
+}
+
 void Hero::setMoveSpeed(float currentSpeed)
 {
 	moveSpeed = currentSpeed;
+}
+
+void Hero::setFlipp(bool direc)
+{
+	cHeroSprite->setFlippedX(direc);
 }
 
 bool Hero::getAttackMode()

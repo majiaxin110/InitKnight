@@ -23,6 +23,7 @@ Sprite* Bullet::GetSprite()
 void Bullet::initBulletSprite(Hero* hero)  //初始化子弹
 {
 	my_hero = hero;
+	heroFaceinBullet = hero->heroface;
 	x = my_hero->getPositionX();
 	y = my_hero->getPositionY();
 	this->bulletsprite = Sprite::create("bullet1.png");
@@ -31,7 +32,13 @@ void Bullet::initBulletSprite(Hero* hero)  //初始化子弹
 
 }
 
-
+void Bullet::initBulletSprite(Vec2 pos,int face)  //初始化子弹,根据位置朝向
+{
+	heroFaceinBullet = face;
+	this->bulletsprite = Sprite::create("bullet1.png");
+	this->addChild(bulletsprite);
+	bulletsprite->setPosition(Vec2(x, y));
+}
 void Bullet::bulletMoveAnimation()  //传入目的地坐标使子弹移动
 {
 
@@ -39,19 +46,19 @@ void Bullet::bulletMoveAnimation()  //传入目的地坐标使子弹移动
 	//if (distance<40)
 	//	return;
 	MoveBy* actionMove;
-	if (my_hero->heroface == 1)
+	if (heroFaceinBullet == 1)
 	{
 		actionMove = MoveBy::create(time, Vec2(-250, 0));
 	}
-	else if (my_hero->heroface == 2)
+	else if (heroFaceinBullet == 2)
 	{
 		actionMove = MoveBy::create(time, Vec2(250, 0));
 	}
-	else if (my_hero->heroface == 3)
+	else if (heroFaceinBullet == 3)
 	{
 		actionMove = MoveBy::create(time,Vec2(0, -250));
 	}
-	else if (my_hero->heroface == 4)
+	else if (heroFaceinBullet == 4)
 	{
 		actionMove = MoveBy::create(time, Vec2(0, 250));
 	}

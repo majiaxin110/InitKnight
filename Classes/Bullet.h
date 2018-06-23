@@ -20,6 +20,7 @@ public:
 	cocos2d::Sprite* bulletsprite;
 	int ifexist;//记录子弹是否还存在
 	float distance;  //子弹和目标距离
+	int heroFaceinBullet;
 	//Monster* my_monster;
 	//localPlay* my_map;
 	ProgressView*  Monster_xue;//怪物血条  
@@ -30,6 +31,7 @@ public:
 	void removeBullet(float delta);//移除子弹
 	void removeBulletFromOutside();
 	void initBulletSprite(Hero* my_hero);
+	void initBulletSprite(Vec2 pos,int face);
 	void bulletMoveAnimation();  //移动子弹
 	void StartListen();
 	void cutMonsterBlood(float delta);//干掉怪物血

@@ -25,7 +25,7 @@ bool localStatus::init()
 
 	cBloodProgress[0]->setScale(1.0f);
 	cBloodProgress[0]->setTotalProgress(100.0f);
-	cBloodProgress[0]->setCurrentProgress(20.0f);
+	cBloodProgress[0]->setCurrentProgress(60.0f);
 	this->addChild(cBloodProgress[0], 101);
 
 	auto pointTip = ui::ImageView::create("pointTip.png");

@@ -18,24 +18,30 @@ bool ClientLayer::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	_tileMap = TMXTiledMap::create("testMap/bigLocalMap.tmx");
+	_tileMap = TMXTiledMap::create("testMap/fightMap.tmx");
 	addChild(_tileMap, 0, 100);
 
-	TMXObjectGroup* group = _tileMap->getObjectGroup("player");
-	ValueMap spawnPoint = group->getObject("startPoint");
+	TMXObjectGroup* group = _tileMap->getObjectGroup("players");
+	ValueMap spawnPoint = group->getObject("Apoint");
 
 	auto x = spawnPoint["x"].asFloat();
 	auto y = spawnPoint["y"].asFloat();
 
 	hero = Hero::create();
 	hero->initHeroSprite();
-	hero->setPosition(Vec2(x - 100, y));
+	hero->addHeadProgress("bloodBack.png", "bloodFore.png", 80);
+	hero->setPosition(Vec2(x, y));
 	addChild(hero, 2, 200);
+
+	spawnPoint = group->getObject("Bpoint");
+	x = spawnPoint["x"].asFloat();
+	y = spawnPoint["y"].asFloat();
 
 	hero2 = Hero::create();
 	hero2->initHeroSprite();
-	hero2->setPosition(Vec2(x + 100, y));
-	
+	hero2->addHeadProgress("bloodBack.png", "bloodFore.png", 80);
+	hero2->setPosition(Vec2(x, y));
+	hero2->changeAttackMode();
 	addChild(hero2, 2, 201);
 
 
@@ -44,17 +50,28 @@ bool ClientLayer::init()
 	_collidable = _tileMap->getLayer("barriers");
 	_collidable->setVisible(false);
 	recTemp2.receivePosition = Vec2(x - 100, y);
+
+	_heart = _tileMap->getLayer("heart");
+
+	recTemp2.receivePosition = Vec2(x - 100, y);
 	//网络初始化
 	this->initNetwork();
 	this->scheduleUpdate();
-	this->schedule(schedule_selector(ClientLayer::Place), 0.02f);
+	this->schedule(schedule_selector(ClientLayer::PlaceAndBlood), 0.02f);
 
 	return true;
 }
 
-void ClientLayer::Place(float dt)
+void ClientLayer::PlaceAndBlood(float dt)
 {
 	hero->setPosition(recTemp2.receivePosition);
+	hero->setFlipp(recTemp2.heroface == 2 ? 0 : 1);
+	hero->headProgress->setCurrentProgress(recTemp2.heroProgress);
+	hero2->headProgress->setCurrentProgress(recTemp2.hero2Progress);
+	if (hero->headProgress->getCurrentProgress() <= 0)
+		changeToWin();
+	else if (hero2->headProgress->getCurrentProgress() <= 0)
+		changeToLose();
 }
 
 void ClientLayer::initNetwork()
@@ -73,8 +90,13 @@ void ClientLayer::sendData(DataType type)
 {
 	GameData data;
 	data.dataType = type;
-	data.dataSize = sizeof(GameData);
+	data.heroface = hero2->heroface;
 	data.position = hero2->getPosition();
+	if (type == ATTACK)
+	{
+		data.bulAttack = true;
+	}
+	data.dataSize = sizeof(GameData);
 	_client->sendMessage((const char*)&data, sizeof(GameData));
 }
 
@@ -87,12 +109,12 @@ void ClientLayer::onRecv( const char* data, int count)
 	{
 		switch (gameData->dataType)
 		{
-
 		case POSITION:
 			recTemp2.receivePosition = gameData->position;
-			
+			recTemp2.hero2Progress = gameData->hero2Blood;
+			recTemp2.heroProgress = gameData->heroBlood;
+			recTemp2.heroface = gameData->heroface;
 			break;
-
 		default:
 			break;
 		}
@@ -120,12 +142,8 @@ cocos2d::EventKeyboard::KeyCode ClientLayer::whichPressed()
 		return EventKeyboard::KeyCode::KEY_S;
 	if (keyStatus[EventKeyboard::KeyCode::KEY_D])
 		return EventKeyboard::KeyCode::KEY_D;
-	if (keyStatus[EventKeyboard::KeyCode::KEY_Q])
-		return EventKeyboard::KeyCode::KEY_Q;
 	if (keyStatus[EventKeyboard::KeyCode::KEY_J])
 		return EventKeyboard::KeyCode::KEY_J;
-	if (keyStatus[EventKeyboard::KeyCode::KEY_K])
-		return EventKeyboard::KeyCode::KEY_K;//尝试用k攻击
 	if (keyStatus[EventKeyboard::KeyCode::KEY_SPACE])
 		return EventKeyboard::KeyCode::KEY_SPACE;
 	return EventKeyboard::KeyCode::KEY_NONE;
@@ -149,8 +167,39 @@ void ClientLayer::update(float delta)
 		onPress(pressedKey);
 	}
 
-	
+	for (auto &j : bulletVec)
+	{
+		if (j->ifexist)
+		{
+			float x1 = hero->getPositionX() - j->bulletsprite->getPositionX();
+			//得到两点y的距离
+			float y1 = hero->getPositionY() - j->bulletsprite->getPositionY();
+			float distance = sqrt(pow(x1, 2) + pow(y1, 2));
 
+			if (distance < 60)
+			{
+				//hero->headProgress->cutBlood(20);
+				j->removeBulletFromOutside();
+			}
+		}
+	}
+
+	Vec2 tileCoord = this->tileCoordFromPosition(recTemp2.receivePosition);
+	//获得瓦片的GID
+	int tileGid = _heart->getTileGIDAt(tileCoord);
+
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collected = propValueMap["isCollectable"].asString();
+
+		if (collected == "true") { //检测成功
+			_heart->removeTileAt(tileCoord);
+			//hero->headProgress->addBlood(25);
+		}
+	}
 }
 
 void ClientLayer::onPress(EventKeyboard::KeyCode keyCode)
@@ -212,24 +261,36 @@ bool ClientLayer::detectPlayerPosition(Vec2 position)
 			return false;
 		}
 	}
+
+	tileGid = _heart->getTileGIDAt(tileCoord);
+
+	if (tileGid > 0)
+	{
+		Value prop = _tileMap->getPropertiesForGID(tileGid);
+		ValueMap propValueMap = prop.asValueMap();
+
+		std::string collect = propValueMap["isCollectable"].asString();
+
+		if (collect == "true") { //收集检测成功
+			//hero2->headProgress->addBlood(25);
+			_heart->removeTileAt(tileCoord);
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/getHeart.wav");
+			return false;
+		}
+	}
 	return true;
 }
 
 void ClientLayer::setPlayerPosition(Vec2 position)
 {
-	/*if (detectPlayerPosition(position))
+	if (detectPlayerPosition(position))
 	{
 		//移动精灵
 		hero2->setPosition(position);
 
-	}*/
-	hero2->setPosition(position);
+	}
 }
 
-void ClientLayer::setEnemyPosition(Vec2 position)
-{
-	hero->setPosition(position);
-}
 
 Vec2 ClientLayer::tileCoordFromPosition(Vec2 pos)
 {
@@ -262,6 +323,25 @@ void ClientLayer::setViewpointCenter(Vec2 position)
 	this->setPosition(offset);
 }
 
+void ClientLayer::changeToWin()
+{
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
+	auto winScene = ScoreScene::create();
+	winScene->putBackImage("fightScore/winBackground.png");
+	auto reScene = TransitionFade::create(1.0f, winScene);
+	Director::getInstance()->replaceScene(reScene);
+}
+
+void ClientLayer::changeToLose()
+{
+	Director::getInstance()->getEventDispatcher()->removeAllEventListeners();
+	auto winScene = ScoreScene::create();
+	winScene->putBackImage("fightScore/loseBackground.png");
+	auto reScene = TransitionFade::create(1.0f, winScene);
+	Director::getInstance()->replaceScene(reScene);
+
+}
+
 
 
 /*std::vector<Monster*>& ClientLayer::getMonsterVec()
@@ -287,9 +367,10 @@ void ClientLayer::onEnter()
 			this->addChild(bulletTemp);
 			bulletVec.push_back(bulletTemp);
 			bulletTemp->StartListen();
+			this->sendData(ATTACK);
 		}
-		if (keyCode == EventKeyboard::KeyCode::KEY_Q)
-			this->hero2->changeAttackMode();
+		/*if (keyCode == EventKeyboard::KeyCode::KEY_Q)
+			this->hero2->changeAttackMode();*/
 		log("%d pressed", keyCode);
 	};
 

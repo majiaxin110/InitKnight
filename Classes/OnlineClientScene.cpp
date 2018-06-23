@@ -10,7 +10,6 @@ Scene* ClientScene::createScene()
 
 bool ClientScene::init()
 {
-	log("local scene init");
 	auto mainLayer = ClientLayer::create();
 	mainLayer->setName("main");
 	/*auto statusLayer = localStatus::create();

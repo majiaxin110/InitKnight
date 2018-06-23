@@ -10,7 +10,7 @@
 #include "Bullet.h"
 #include "SocketClient.h"
 #include "BaseLayer.h"
-
+#include "ScoreScene.h"
 
 USING_NS_CC;
 
@@ -23,10 +23,11 @@ private:
 
 public:
 	
-	void Place(float dt);
+	void PlaceAndBlood(float dt);
 
 	cocos2d::TMXTiledMap* _tileMap;
 	cocos2d::TMXLayer* _collidable;
+	cocos2d::TMXLayer* _heart;
 
 	Hero *hero;
 	Hero *hero2;
@@ -56,12 +57,14 @@ public:
 
 	bool detectPlayerPosition(cocos2d::Vec2 position);//检测Hero位置与地图某些地方的重合问题，返回是否可移动
 	void setPlayerPosition(cocos2d::Vec2 position);
-	void ClientLayer::setEnemyPosition(Vec2 position);
 	cocos2d::Vec2 tileCoordFromPosition(cocos2d::Vec2 position);
 	void setViewpointCenter(cocos2d::Vec2 position);
 
 
 	std::vector<Bullet*> bulletVec;
+
+	void changeToWin();
+	void changeToLose();
 
 	//std::vector<Monster*>& getMonsterVec();
 	// implement the "static create()" method manually

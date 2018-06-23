@@ -309,12 +309,15 @@ void Monster::cutHeroBlood(float delta)
 void Monster::heroCutMonsterBlood(float delta)//英雄干掉怪物血
 {
 	float x = my_hero->getPositionX() - (this->getPositionX() + my_map->getPositionX());
-	//得到两点y的距离，记得怪物的坐标要加上地图的  
+	//得到两点的距离，记得怪物的坐标要加上地图的  
 	float y = my_hero->getPositionY() - (this->getPositionY() + my_map->getPositionY());
 
-	//先计算怪物和英雄的距离  
+	//先计算怪物和英雄的距离
 	dis = sqrt(pow(x, 2) + pow(y, 2));
-	if (my_hero->isAttacking == true && !my_hero->getAttackMode() && dis<64)
+
+	if (my_hero->isAttacking == true && !my_hero->getAttackMode() && dis<64
+		&& ((my_hero->getPositionX() - this->getPositionX() <=0 && my_hero->heroface == 2)
+			||(my_hero->getPositionX() - this->getPositionX() >=0 && my_hero->heroface == 1)))
 		if (this->getHurt(5))
 			isDied = true;
 }

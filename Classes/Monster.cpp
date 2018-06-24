@@ -127,10 +127,10 @@ void Monster::AttackEnd()
 void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 {
 
-	//得到两点x的距离,记得怪物的坐标要加上地图的  
-	float x = m_hero->getPositionX() - (this->getPositionX() + m_map->getPositionX());
-	//得到两点y的距离，记得怪物的坐标要加上地图的  
-	float y = m_hero->getPositionY() - (this->getPositionY() + m_map->getPositionY());
+	  
+	float x = m_hero->getPositionX() - this->getPositionX() ;
+
+	float y = m_hero->getPositionY() - this->getPositionY() ;
 
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
@@ -308,9 +308,9 @@ void Monster::cutHeroBlood(float delta)
 
 void Monster::heroCutMonsterBlood(float delta)//英雄干掉怪物血
 {
-	float x = my_hero->getPositionX() - (this->getPositionX() + my_map->getPositionX());
-	//得到两点的距离，记得怪物的坐标要加上地图的  
-	float y = my_hero->getPositionY() - (this->getPositionY() + my_map->getPositionY());
+	float x = my_hero->getPositionX() - this->getPositionX() ;
+ 
+	float y = my_hero->getPositionY() - this->getPositionY();
 
 	//先计算怪物和英雄的距离
 	dis = sqrt(pow(x, 2) + pow(y, 2));
@@ -335,8 +335,55 @@ void  Monster::MonsterSeeRun()
 	else
 		moveby1 = MoveBy::create(4, Vec2(100, 0));*/
 	//创建回调动作，巡逻路线完后  
+	bool lefttag = true;  //记录上下左右是否能走
+	bool righttag = true;
+	bool uptag = true;
+	bool downtag = true;
+	for (int i = 1; i < 100; i++)  //for循环判断巡逻范围内有没有障碍
+	{
+		if (!detectMonsterPosition(Vec2(this->getPositionX() - i, this->getPositionY())) || MonsterDirecton == false)
+		{
+			lefttag = false;
+			break;
+		}
+	}
+	for (int i = 1; i < 100; i++)
+	{
+		if (!detectMonsterPosition(Vec2(this->getPositionX() + i, this->getPositionY())) ||MonsterDirecton == true)
+		{
+			righttag = false;
+			break;
+		}
+	}
+	for (int i = 1; i < 100; i++)
+	{
+		if (!detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY()+i)) )
+		{
+			uptag = false;
+			break;
+		}
+	}
+	for (int i = 1; i < 100; i++)
+	{
+		if (!detectMonsterPosition(Vec2(this->getPositionX() , this->getPositionY()-i)) )
+		{
+			downtag = false;
+			break;
+		}
+	}
+	//根据之前判断创建巡逻动作
+	if (lefttag==true)
+		moveby1 = MoveBy::create(4, Vec2(-100, 0));
+	else if (righttag==true)
+		moveby1 = MoveBy::create(4, Vec2(100, 0));
+	else if (uptag==true)
+		moveby1 = MoveBy::create(4, Vec2(0, 100));
+	else if (downtag==true)
+		moveby1 = MoveBy::create(4, Vec2(0, -100));
+	else
+		moveby1 = MoveBy::create(4, Vec2(0,0));
 
-	if (detectMonsterPosition(Vec2(this->getPositionX() - 10, this->getPositionY()))&&MonsterDirecton==true)
+	/*if (detectMonsterPosition(Vec2(this->getPositionX() - 10, this->getPositionY()))&&MonsterDirecton==true)
 	{
 		moveby1 = MoveBy::create(4, Vec2(-100, 0));
 	}
@@ -345,7 +392,7 @@ void  Monster::MonsterSeeRun()
 	else if(detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY()+10)))
 		moveby1 = MoveBy::create(4, Vec2(0,100));
 	else if (detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY()-10)))
-		moveby1 = MoveBy::create(4, Vec2(0, -100));  
+		moveby1 = MoveBy::create(4, Vec2(0, -100));  */
 	//这里分别判断上下左右四个方向，优先左右，没障碍就巡逻，预判的距离是10，随便设的，比follow那个小点
 	CallFunc* callFunc = CallFunc::create(this, callfunc_selector(Monster::StopAnimation));
 	//创建连续动作  
@@ -371,10 +418,10 @@ void Monster::StartListen(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 //监听函数,每隔2秒检测下
 void Monster::updateMonster(float delta)
 {
-	//得到两点x的距离,记得怪物的坐标要加上地图的  
-	float x = my_hero->getPositionX() - (this->getPositionX() + my_map->getPositionX());
-	//得到两点y的距离，记得怪物的坐标要加上地图的  
-	float y = my_hero->getPositionY() - (this->getPositionY() + my_map->getPositionY());
+	
+	float x = my_hero->getPositionX() - this->getPositionX();
+	
+	float y = my_hero->getPositionY() - this->getPositionY();
 	//先计算怪物和英雄的距离  
 	dis = sqrt(pow(x, 2) + pow(y, 2));
 	if (dis >= senseDistance)

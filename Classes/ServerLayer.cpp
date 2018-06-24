@@ -1,5 +1,6 @@
 #include "ServerLayer.h"
 #include <cmath>
+
 USING_NS_CC;
 const int tileSize = 32;//瓦片大小
 receiveTemp recTemp1;  
@@ -55,6 +56,12 @@ bool ServerLayer::init()   //初始化地图网络等
 	this->initNetwork();
 	this->scheduleUpdate();
 	this->schedule(schedule_selector(ServerLayer::Place), 0.02f);   //网络部分
+
+	IP serverip;
+	string playserverip=serverip.getip();
+	auto label1 = Label::create(playserverip, "Arial", 20, Size::ZERO, TextHAlignment::LEFT, TextVAlignment::TOP); //创建标签  
+	label1->setPosition(Vec2(x, y+96)); //设置标签位置  
+	this->addChild(label1); //加入到场景中  
 
 	return true;
 }

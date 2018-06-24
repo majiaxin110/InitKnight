@@ -4,8 +4,13 @@
 #include "ui/CocosGUI.h"
 #include "OnlineServerScene.h"
 #include "OnlineClientScene.h"
+#include "ClientLayer.h"
+#include "cocos-ext.h"
 
 USING_NS_CC;
+USING_NS_CC_EXT;
+
+string targetIP;
 
 Scene* HelloWorld::createScene()
 {
@@ -38,6 +43,16 @@ bool HelloWorld::init()
 		, origin.y + visibleSize.height / 2));
 	this->addChild(backGround,0);
 
+	//创建输入框
+	auto editBox = EditBox::create(Size(300, 60), "whiteBox.png");
+	editBox->setPosition(Vec2(origin.x + visibleSize.width / 3 * 2 + 40, origin.y + visibleSize.height / 3 + 345));
+	editBox->setMaxLength(16);   //输入框最多能输入多少个字符  
+	editBox->setText("127.0.0.1"); //初始化文字  
+	editBox->setFontColor(Color3B(255, 0, 0));   //文字颜色  
+	editBox->setFontSize(40);
+	addChild(editBox);
+	
+
 	//选择按钮
 	auto singleModeButton = ui::Button::create("buttonSingle.png");
 	singleModeButton->setPosition(Vec2(origin.x + visibleSize.width / 3, origin.y + visibleSize.height / 3));
@@ -67,6 +82,7 @@ bool HelloWorld::init()
 	//利用lambda表达式处理单击
 	doubleModeButtonServer->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
 		log("Double Local Play Mode");
+
 		auto serverScene = ServerScene::create();
 		serverScene->setTag(580);
 		auto reScene = TransitionFade::create(1.0f, serverScene);
@@ -86,8 +102,9 @@ bool HelloWorld::init()
 	auto doubleModeButtonClient = ui::Button::create("doubleButtonJoin.png");
 	doubleModeButtonClient->setPosition(Vec2(origin.x + visibleSize.width / 3 * 2, origin.y + visibleSize.height / 3-45));
 	//利用lambda表达式处理单击
-	doubleModeButtonClient->addTouchEventListener([](Ref *pSender, ui::Widget::TouchEventType type) {
+	doubleModeButtonClient->addTouchEventListener([editBox](Ref *pSender, ui::Widget::TouchEventType type) {
 		log("Double Local Play Mode");
+		targetIP = editBox->getText();
 		auto clientScene = ClientScene::create();
 		clientScene->setTag(581);
 		auto reScene = TransitionFade::create(1.0f, clientScene);
@@ -103,6 +120,8 @@ bool HelloWorld::init()
 	});
 	doubleModeButtonClient->setPressedActionEnabled(true);
 	this->addChild(doubleModeButtonClient, 1);
+
+
 
 
 	//背景音乐开关

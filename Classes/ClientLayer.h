@@ -17,7 +17,7 @@ USING_NS_CC;
 
 
 
-extern string targetIP;
+extern std::string targetIP;
 
 
 

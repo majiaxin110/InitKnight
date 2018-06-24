@@ -1,6 +1,6 @@
 
 #include "OnlineClientScene.h"
-
+#include "ClientLayer.h"
 USING_NS_CC;
 
 Scene* ClientScene::createScene()
@@ -11,6 +11,7 @@ Scene* ClientScene::createScene()
 bool ClientScene::init()
 {
 	auto mainLayer = ClientLayer::create();
+
 	mainLayer->setName("main");
 	/*auto statusLayer = localStatus::create();
 	statusLayer->setName("status");

@@ -1,5 +1,6 @@
 #include "ClientLayer.h"
 
+
 USING_NS_CC;
 const int tileSize = 32;//ÍßÆ¬´óÐ¡
 
@@ -62,6 +63,7 @@ bool ClientLayer::init()
 	return true;
 }
 
+
 void ClientLayer::PlaceAndBlood(float dt)
 {
 	hero->setPosition(recTemp2.receivePosition);
@@ -80,7 +82,14 @@ void ClientLayer::initNetwork()
 	_client = SocketClient::construct();
 	_client->onRecv = CC_CALLBACK_2(ClientLayer::onRecv, this);
 	//_client->onDisconnect = CC_CALLBACK_0(ClientLayer::onDisconnect, this);
-	if (!_client->connectServer("127.0.0.1", 8000))
+	char *ip;
+	int len = targetIP.length();
+	ip = (char *)malloc((len + 1) * sizeof(char));
+	targetIP.copy(ip, len, 0);
+	*(ip + len) = '\0';
+	log("len: %d", len);
+	log("liuliuliu %s", ip);
+	if (!_client->connectServer(ip, 8000))
 	{
 		//_lblInfo->setString("Client connect error");
 	}

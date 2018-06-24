@@ -11,6 +11,7 @@
 #include "BaseLayer.h"  //存放一些发送传输数据时都要用到的
 #include "ScoreScene.h"
 
+
 USING_NS_CC;
 
 class ServerLayer : public cocos2d::Layer

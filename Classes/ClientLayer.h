@@ -3,7 +3,7 @@
 #include "SimpleAudioEngine.h"
 #include "hero.h"
 #include "localPlayStatusLayer.h"
-
+#include <string>
 #include <map>
 #include <vector>
 #include "Monster.h"
@@ -11,8 +11,14 @@
 #include "SocketClient.h"
 #include "BaseLayer.h"
 #include "ScoreScene.h"
+#include <string>
 
 USING_NS_CC;
+
+
+
+extern string targetIP;
+
 
 
 
@@ -23,6 +29,8 @@ private:
 
 public:
 	
+
+
 	void PlaceAndBlood(float dt);
 
 	cocos2d::TMXTiledMap* _tileMap;

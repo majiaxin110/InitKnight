@@ -1,4 +1,3 @@
-
 #include "OnlineServerScene.h"
 
 USING_NS_CC;
@@ -12,13 +11,8 @@ bool ServerScene::init()
 {
 	auto mainLayer = ServerLayer::create();
 	mainLayer->setName("main");
-	/*auto statusLayer = localStatus::create();
-	statusLayer->setName("status");
-	statusLayer->setTag(123);
-	mainLayer->getStatusLayer(statusLayer);*/
 
 	this->addChild(mainLayer, 1);
-	//this->addChild(statusLayer, 20);
 
 	return true;
 }

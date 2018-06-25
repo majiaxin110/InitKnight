@@ -43,12 +43,15 @@ bool HelloWorld::init()
 		, origin.y + visibleSize.height / 2));
 	this->addChild(backGround,0);
 
-	//创建输入框
+	//创建ip输入框
 	auto editBox = EditBox::create(Size(300, 60), "whiteBox.png");
-	editBox->setPosition(Vec2(origin.x + visibleSize.width / 3 * 2 + 40, origin.y + visibleSize.height / 3 + 345));
+	editBox->setPosition(Vec2(origin.x + visibleSize.width / 3*2+10, origin.y + visibleSize.height / 3-115));
 	editBox->setMaxLength(16);   //输入框最多能输入多少个字符  
-	editBox->setText("127.0.0.1"); //初始化文字  
-	editBox->setFontColor(Color3B(255, 0, 0));   //文字颜色  
+	editBox->setPlaceHolder("IP connecting here");
+	editBox->setPlaceholderFontSize(20);
+	editBox->setPlaceholderFontColor(Color3B::RED);
+	//editBox->setText("127.0.0.1"); //初始化文字  
+	editBox->setFontColor(Color3B::RED);   //文字颜色  
 	editBox->setFontSize(40);
 	addChild(editBox);
 	
@@ -121,14 +124,11 @@ bool HelloWorld::init()
 	doubleModeButtonClient->setPressedActionEnabled(true);
 	this->addChild(doubleModeButtonClient, 1);
 
-
-
-
 	//背景音乐开关
 	auto *chnStrings = Dictionary::createWithContentsOfFile("string.xml");
 	const char *strMusic = ((__String*)chnStrings->objectForKey("music"))->getCString();
 	auto musicLabel = Label::createWithTTF(strMusic, "fonts/Deng.ttf",20);
-	musicLabel->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + 120));
+	musicLabel->setPosition(Vec2(origin.x + visibleSize.width/4*3+40, origin.y + 50));
 	this->addChild(musicLabel, 1);
 
 	auto musicCheck = ui::CheckBox::create("unCheckBox.png","CheckBox.png");

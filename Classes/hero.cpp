@@ -64,7 +64,6 @@ void Hero::setRunAnimation(bool runDirection)
 			frameName = __String::createWithFormat("knightAnime/runWithGun_%d.png", i);
 		else
 			frameName = __String::createWithFormat("knightAnime/run_%d.png", i);
-		//SpriteFrame *spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName->getCString());
 		animation->addSpriteFrameWithFile(frameName->getCString());
 	}
 	animation->setLoops(-1);
@@ -75,27 +74,6 @@ void Hero::setRunAnimation(bool runDirection)
 
 	isMoving = true;
 }
-
-/*void Hero::setAttackAnimation()
-{
-	if (isAttacking || cHeroSprite->getNumberOfRunningActions() > 0)
-		return;
-	isAttacking = true;
-	Animation *animation = Animation::create();
-	log("run attack anime");
-	for (int i = 1; i <= 4; i++)
-	{
-		__String *frameName = __String::createWithFormat("knightAnime/attackKnife_%d.png", i);
-		//SpriteFrame *spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName->getCString());
-		animation->addSpriteFrameWithFile(frameName->getCString());
-	}
-	animation->setLoops(1);
-	animation->setDelayPerUnit(0.1f);
-	Animate *action = Animate::create(animation);
-	action->setTag(102);
-	cHeroSprite->runAction(action);
-	isAttacking = false;
-}*/
 
 void Hero::setAttackAnimation()
 {
@@ -135,7 +113,6 @@ void Hero::AttackEnd()
 	isAttacking = false;
 }
 
-
 void Hero::setUpAnimation()
 {
 	if (isAttacking)
@@ -146,7 +123,6 @@ void Hero::setUpAnimation()
 	for (int i = 1; i <= 5; i++)
 	{
 		__String *frameName = __String::createWithFormat("knightAnime/up_%d.png", i);
-		//SpriteFrame *spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(frameName->getCString());
 		animation->addSpriteFrameWithFile(frameName->getCString());
 	}
 	animation->setLoops(1);
@@ -196,4 +172,3 @@ bool Hero::getAttackMode()
 {
 	return attackMode;
 }
-

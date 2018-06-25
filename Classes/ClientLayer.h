@@ -17,7 +17,7 @@ USING_NS_CC;
 
 
 
-extern std::string targetIP;
+extern string targetIP;
 
 
 
@@ -28,8 +28,6 @@ private:
 	
 
 public:
-	
-
 
 	void PlaceAndBlood(float dt);
 
@@ -48,18 +46,14 @@ public:
 	void initNetwork();
 	void sendData(DataType type);
 	void onRecv(const char* data, int count);
-	void onDisconnect();
 
 	//static cocos2d::Scene* createScene();
-	localStatus* statusLayer;
 
 	virtual bool init();
 	virtual void onEnter();
-	//virtual void onExit();
 
 	virtual void onPress(cocos2d::EventKeyboard::KeyCode keyCode);
 
-	void getStatusLayer(localStatus* tLayer);
 	cocos2d::EventKeyboard::KeyCode whichPressed();
 	void update(float delta) override;
 
@@ -74,7 +68,5 @@ public:
 	void changeToWin();
 	void changeToLose();
 
-	//std::vector<Monster*>& getMonsterVec();
-	// implement the "static create()" method manually
 	CREATE_FUNC(ClientLayer);
 };

@@ -10,7 +10,7 @@ USING_NS_CC;
 #pragma comment(lib, "WS2_32.lib")
 #define HSocket SOCKET
 
-#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)//平台相关
 #include <error.h>
 #include <arpa/inet.h>		// for inet_**
 #include <netdb.h>			// for gethost**
@@ -52,8 +52,14 @@ public:
 		msgData = nullptr;
 	}
 
-	Data* getMsgData() { return msgData; }
-	MessageType getMsgType() { return msgType; }
+	Data* getMsgData() 
+	{ 
+		return msgData; 
+	}
+	MessageType getMsgType() 
+	{ 
+		return msgType; 
+	}
 
 	~SocketMessage()
 	{

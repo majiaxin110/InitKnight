@@ -56,7 +56,7 @@ bool SocketClient::initClient()
 	return true;
 }
 
-bool SocketClient::connectServer(const char* serverIP, unsigned short port)
+bool SocketClient::connectServer(const char* serverIP, unsigned short port)//根据IP连接
 {
 	if (!this->initClient())
 	{

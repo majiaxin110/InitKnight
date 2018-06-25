@@ -38,13 +38,11 @@ public:
 	void sendData(DataType type);
 	void onRecv(HSocket socket, const char* data, int count);
 	
-	void addBullet();
-	//static cocos2d::Scene* createScene();
+
 	localStatus* statusLayer;
 
 	virtual bool init();
 	virtual void onEnter();
-	//virtual void onExit();
 
 	virtual void onPress(cocos2d::EventKeyboard::KeyCode keyCode);
 
@@ -62,7 +60,5 @@ public:
 	void changeToWin();
 	void changeToLose();
 
-	//std::vector<Monster*>& getMonsterVec();
-	// implement the "static create()" method manually
 	CREATE_FUNC(ServerLayer);
 };

@@ -28,7 +28,7 @@ bool ServerLayer::init()   //初始化地图网络等
 
 	hero = Hero::create();
 	hero->initHeroSprite();
-	hero->addHeadProgress("bloodBack.png", "bloodFore.png",80);
+	hero->addHeadProgress("bloodBack.png", "bloodFore.png",100);
 	hero->setPosition(Vec2(x, y));
 	hero->setMoveSpeed(hero->getMoveSpeed()*1.2);
 	this->addChild(hero, 2, 200);
@@ -58,10 +58,14 @@ bool ServerLayer::init()   //初始化地图网络等
 	this->schedule(schedule_selector(ServerLayer::Place), 0.02f);   //网络部分
 
 	IP serverip;
-	string playserverip=serverip.getip();
-	auto label1 = Label::create(playserverip, "Arial", 20, Size::ZERO, TextHAlignment::LEFT, TextVAlignment::TOP); //创建标签  
-	label1->setPosition(Vec2(x, y+96)); //设置标签位置  
-	this->addChild(label1); //加入到场景中  
+	//显示当前ip标签
+	string playServerIP("Your IP: ");
+	playServerIP= playServerIP + serverip.getip();
+	//auto label1 = Label::createWithTTF(playserverip, "Arial", 20, Size::ZERO, TextHAlignment::LEFT, TextVAlignment::TOP); //创建标签  
+	auto labelIP = Label::createWithTTF(playServerIP, "fonts/Dengb.ttf", 20);
+	labelIP->setColor(Color3B::BLACK);
+	labelIP->setPosition(Vec2(x, y+96)); //设置标签位置  
+	this->addChild(labelIP); //加入到场景中  
 
 	return true;
 }
@@ -79,7 +83,7 @@ void ServerLayer::initNetwork()
 {
 
 	_server = SocketServer::getInstance();
-	_server->startServer(8000);
+	_server->startServer(3160);
 	_server->onRecv = CC_CALLBACK_3(ServerLayer::onRecv, this);
 }
 
@@ -107,11 +111,8 @@ void ServerLayer::onRecv(HSocket socket, const char* data, int count)
 		{
 	
 		case POSITION:
-			/*//hero2->setPosition(gameData->position);
-			this->hero2->setPosition(gameData->position);*/
 			recTemp1.receivePosition = gameData->position;
 			recTemp1.heroface = gameData->heroface;
-			//log("????%f", receivetemp.x);
 			break;
 		case ATTACK:
 			log("receive attack!");
@@ -195,7 +196,7 @@ void ServerLayer::update(float delta)
 
 			if (distance < 60)
 			{
-				if (hero->headProgress->cutBlood(8))
+				if (hero->headProgress->cutBlood(5))
 					changeToLose();
 				j->removeBulletFromOutside();
 			}
@@ -326,10 +327,10 @@ void ServerLayer::setViewpointCenter(Vec2 position)
 {
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	//可以防止，视图左边超出屏幕之外。
+	//防止视图左边超出屏幕之外。
 	int x = MAX(position.x, visibleSize.width / 2);
 	int y = MAX(position.y, visibleSize.height / 2);
-	//可以防止，视图右边超出屏幕之外。
+	//防止视图右边超出屏幕之外。
 	x = MIN(x, (_tileMap->getMapSize().width * _tileMap->getTileSize().width)
 		- visibleSize.width / 2);
 	y = MIN(y, (_tileMap->getMapSize().height * _tileMap->getTileSize().height)
@@ -344,13 +345,6 @@ void ServerLayer::setViewpointCenter(Vec2 position)
 	Vec2 offset = pointA - pointB;
 	this->setPosition(offset);
 }
-
-
-
-/*std::vector<Monster*>& ServerLayer::getMonsterVec()
-{
-return monsterVec;
-}*/
 
 void ServerLayer::onEnter()
 {

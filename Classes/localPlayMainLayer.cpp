@@ -1,3 +1,4 @@
+//本地层
 #include "localPlayMainLayer.h"
 
 USING_NS_CC;
@@ -101,8 +102,6 @@ void localPlay::getStatusLayer(localStatus* tLayer)
 	{
 		j->getBloodStatus(statusLayer);//让怪物接受statuslayer
 	}
-	//monsterVec.at(0)->getBloodStatus(statusLayer);
-	//bullettemp->getBloodStatus(statusLayer);//让子弹接受
 }
 cocos2d::EventKeyboard::KeyCode localPlay::whichPressed()
 {
@@ -169,7 +168,6 @@ void localPlay::update(float delta)
 		}
 		if (flag)
 			break;
-		//log("Monster Vector size:%d", monsterVec.size());
 	}
 
 }
@@ -394,10 +392,10 @@ void localPlay::setViewpointCenter(Vec2 position)
 {
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	//可以防止，视图左边超出屏幕之外。
+	//防止视图左边超出屏幕之外。
 	int x = MAX(position.x, visibleSize.width / 2);
 	int y = MAX(position.y, visibleSize.height / 2);
-	//可以防止，视图右边超出屏幕之外。
+	//防止视图右边超出屏幕之外。
 	x = MIN(x, (_tileMap->getMapSize().width * _tileMap->getTileSize().width)
 		- visibleSize.width / 2);
 	y = MIN(y, (_tileMap->getMapSize().height * _tileMap->getTileSize().height)
@@ -412,13 +410,6 @@ void localPlay::setViewpointCenter(Vec2 position)
 	Vec2 offset = pointA - pointB;
 	this->setPosition(offset);
 }
-
-
-
-/*std::vector<Monster*>& localPlay::getMonsterVec()
-{
-	return monsterVec;
-}*/
 
 void localPlay::onEnter()
 {

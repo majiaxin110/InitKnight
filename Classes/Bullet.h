@@ -8,10 +8,6 @@
 class Bullet :public cocos2d::Node
 {
 private:
-	//float speed;//子弹飞行速度
-	//int power;//一次干掉多少血
-	//char* bulletname; //
-	
 	float speed;//子弹飞行速度
 	int power;//一次干掉多少血
 	char* bulletname; //保存初始图片名称
@@ -29,13 +25,11 @@ public:
 	~Bullet();
 	cocos2d::Sprite* GetSprite();
 	void removeBullet(float delta);//移除子弹
-	void removeBulletFromOutside();
+	void removeBulletFromOutside();//外部移除
 	void initBulletSprite(Hero* my_hero);
 	void initBulletSprite(Vec2 pos,int face);
 	void bulletMoveAnimation();  //移动子弹
 	void StartListen();
-	void cutMonsterBlood(float delta);//干掉怪物血
-
 	//装备操作
 
 	CREATE_FUNC(Bullet);

@@ -1,6 +1,5 @@
 #include "ClientLayer.h"
 
-
 USING_NS_CC;
 const int tileSize = 32;//瓦片大小
 
@@ -14,8 +13,6 @@ bool ClientLayer::init()
 	if (!Layer::init())
 		return false;
 
-	statusLayer = nullptr;
-
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -28,9 +25,10 @@ bool ClientLayer::init()
 	auto x = spawnPoint["x"].asFloat();
 	auto y = spawnPoint["y"].asFloat();
 
+	//服务器端控制hero
 	hero = Hero::create();
 	hero->initHeroSprite();
-	hero->addHeadProgress("bloodBack.png", "bloodFore.png", 80);
+	hero->addHeadProgress("bloodBack.png", "bloodFore.png", 100);
 	hero->setPosition(Vec2(x, y));
 	addChild(hero, 2, 200);
 
@@ -38,15 +36,15 @@ bool ClientLayer::init()
 	x = spawnPoint["x"].asFloat();
 	y = spawnPoint["y"].asFloat();
 
+	//客户端控制hero
 	hero2 = Hero::create();
 	hero2->initHeroSprite();
-	hero2->addHeadProgress("bloodBack.png", "bloodFore.png", 80);
+	hero2->addHeadProgress("bloodBack.png", "bloodFore.png", 100);
 	hero2->setPosition(Vec2(x, y));
 	hero2->changeAttackMode();
 	addChild(hero2, 2, 201);
 
-
-	setViewpointCenter(hero->getPosition());
+	//setViewpointCenter(hero->getPosition());
 	//获取地图的不同层
 	_collidable = _tileMap->getLayer("barriers");
 	_collidable->setVisible(false);
@@ -64,7 +62,7 @@ bool ClientLayer::init()
 }
 
 
-void ClientLayer::PlaceAndBlood(float dt)
+void ClientLayer::PlaceAndBlood(float dt)//确定位置及血量
 {
 	hero->setPosition(recTemp2.receivePosition);
 	hero->setFlipp(recTemp2.heroface == 2 ? 0 : 1);
@@ -89,7 +87,7 @@ void ClientLayer::initNetwork()
 	*(ip + len) = '\0';
 	log("len: %d", len);
 	log("liuliuliu %s", ip);
-	if (!_client->connectServer(ip, 8000))
+	if (!_client->connectServer(ip, 3160))
 	{
 		//_lblInfo->setString("Client connect error");
 	}
@@ -131,16 +129,6 @@ void ClientLayer::onRecv( const char* data, int count)
 
 }
 
-void ClientLayer::getStatusLayer(localStatus* tLayer)
-{
-	if (tLayer == nullptr)
-		cocos2d::log("fuck status layer!!");
-	else
-		cocos2d::log("status layer tag %d", tLayer->getTag());
-	statusLayer = tLayer;
-
-	//bullettemp->getBloodStatus(statusLayer);//让子弹接受
-}
 cocos2d::EventKeyboard::KeyCode ClientLayer::whichPressed()
 {
 	if (keyStatus[EventKeyboard::KeyCode::KEY_W])

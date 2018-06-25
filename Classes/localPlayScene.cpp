@@ -1,3 +1,4 @@
+//±¾µØ²ãÈÝÆ÷
 #include "localPlayScene.h"
 #include "localPlayMainLayer.h"
 #include "localPlayStatusLayer.h"
@@ -6,12 +7,6 @@ Scene* localScene::createScene()
 {
 	return localScene::create();
 }
-
-/*void localScene::transPlayerName(const char * name)
-{
-	localStatus* sta = static_cast<localStatus*>(this->getChildByTag(123));
-	sta->setPlayerName(name);
-}*/
 
 bool localScene::init()
 {

@@ -14,7 +14,7 @@ Monster::Monster(void)
 
 Monster::~Monster(void)
 {
-
+	CC_SAFE_DELETE(m_MonsterSprite);
 }
 
 Sprite* Monster::GetSprite()
@@ -33,8 +33,6 @@ void Monster::InitMonsterSprite(char *name)  //不带血条的怪物
 		m_MonsterSprite->setFlippedX(!MonsterDirecton);
 	this->addChild(m_MonsterSprite);
 	isDied = false;
-
-
 }
 
 void Monster::InitMonsterSprite(char *name, char *xue_back, char* xue_fore,float totalPro)  //带血条的怪物  函数重载
@@ -163,8 +161,6 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 			this->setPosition(this->getPositionX() - 0.8, this->getPositionY());//怪物向英雄移动  
 			this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 
-		//this->setPosition(this->getPositionX() - 0.8, this->getPositionY());//怪物向英雄移动  
-		//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 		}
 		else if (x > 64/*&& detectMonsterPosition(Vec2(this->getPositionX() + 0.8, this->getPositionY()))*/)
 		{
@@ -177,10 +173,8 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 			this->setPosition(this->getPositionX() + 0.8, this->getPositionY());
 			this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 
-		//this->setPosition(this->getPositionX() + 0.8, this->getPositionY());
-		//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 		}
-		else if (x <= 64)//怪物橫坐標和英雄相差在64以内时，开始移动怪物纵坐标  
+		else if (x <= 64)//怪物横坐标和英雄相差在64以内时，开始移动怪物纵坐标  
 		{
 
 			if (m_hero->getPositionY() > this->getPositionY()&& detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY() + 32)))  //这是第二层if ，判断上下撞不撞墙
@@ -192,8 +186,6 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 				this->setPosition(this->getPositionX(), this->getPositionY() + 0.8);
 				this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 
-			//this->setPosition(this->getPositionX(), this->getPositionY() + 0.8);
-			//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 			}
 			else if (m_hero->getPositionY() < this->getPositionY()&& detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY() - 32)))		//上下	
 			{
@@ -204,8 +196,6 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 				this->setPosition(this->getPositionX(), this->getPositionY() - 0.8);
 				this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  //knightAnime/run_%d.png
 
-			//this->setPosition(this->getPositionX(), this->getPositionY() - 0.8);
-			//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  //knightAnime/run_%d.png
 			}
 		}
 	}
@@ -220,7 +210,7 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 		std::string aniName(Monster_name);
 		aniName = aniName + "/monsterwalk";
 
-		if (x < -64/*&& detectMonsterPosition(Vec2(this->getPositionX() - 0.8, this->getPositionY()))*/)//判断怪物横坐标和英雄的距离  
+		if (x < -64 )//判断怪物横坐标和英雄的距离  
 		{
 			log("%f \n %f", my_map->getPositionX(), this->getPositionX());
 			MonsterDirecton = true;
@@ -231,8 +221,6 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 			this->setPosition(this->getPositionX() - 0.8, this->getPositionY());//怪物向英雄移动  
 			this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 
-																	//this->setPosition(this->getPositionX() - 0.8, this->getPositionY());//怪物向英雄移动  
-																	//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 		}
 		else if (x > 64/*&& detectMonsterPosition(Vec2(this->getPositionX() + 0.8, this->getPositionY()))*/)
 		{
@@ -245,8 +233,6 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 			this->setPosition(this->getPositionX() + 0.8, this->getPositionY());
 			this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 
-																	//this->setPosition(this->getPositionX() + 0.8, this->getPositionY());
-																	//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 		}
 		else if (x <= 64)//怪物横坐标和英雄相差在64以内时，开始移动怪物纵坐标  
 		{
@@ -260,8 +246,6 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 				this->setPosition(this->getPositionX(), this->getPositionY() + 0.8);
 				this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 
-																		//this->setPosition(this->getPositionX(), this->getPositionY() + 0.8);
-																		//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  
 			}
 			else if (m_hero->getPositionY() < this->getPositionY()&& detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY() - 32))) //左右
 			{
@@ -272,8 +256,6 @@ void Monster::FollowRun(Hero* m_hero, cocos2d::TMXTiledMap* m_map)
 				this->setPosition(this->getPositionX(), this->getPositionY() - 0.8);
 				this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  //knightAnime/run_%d.png
 
-																		//this->setPosition(this->getPositionX(), this->getPositionY() - 0.8);
-																		//this->SetAnimation(aniName.c_str(), 6, MonsterDirecton);//播放动画  //knightAnime/run_%d.png
 			}
 		}
 	}
@@ -294,10 +276,6 @@ void Monster::JudgeAttack()//判定攻击
 		aniName = aniName + "/monsterattack";
 		this->AttackAnimation(aniName.c_str(), 6, MonsterDirecton);
 	}
-	//this->schedule(schedule_selector(Monster::cutHeroBlood), 1.0f); 
-	//this->schedule(schedule_selector(Monster::updateMonster), 2.0f);
-	//}
-
 }
 
 void Monster::cutHeroBlood(float delta)
@@ -328,12 +306,6 @@ void  Monster::MonsterSeeRun()
 		return;
 	this->SetAnimation((Monster_name+"/monsterwalk").c_str(), 6, MonsterDirecton);//播放动画  
 	MoveBy *moveby1;
-	/*if (MonsterDirecton == true)
-	{
-		moveby1 = MoveBy::create(4, Vec2(-100, 0));
-	}
-	else
-		moveby1 = MoveBy::create(4, Vec2(100, 0));*/
 	//创建回调动作，巡逻路线完后  
 	bool lefttag = true;  //记录上下左右是否能走
 	bool righttag = true;
@@ -383,16 +355,6 @@ void  Monster::MonsterSeeRun()
 	else
 		moveby1 = MoveBy::create(4, Vec2(0,0));
 
-	/*if (detectMonsterPosition(Vec2(this->getPositionX() - 10, this->getPositionY()))&&MonsterDirecton==true)
-	{
-		moveby1 = MoveBy::create(4, Vec2(-100, 0));
-	}
-	else if(detectMonsterPosition(Vec2(this->getPositionX() +10, this->getPositionY()))&& MonsterDirecton == false)
-		moveby1 = MoveBy::create(4, Vec2(100, 0));
-	else if(detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY()+10)))
-		moveby1 = MoveBy::create(4, Vec2(0,100));
-	else if (detectMonsterPosition(Vec2(this->getPositionX(), this->getPositionY()-10)))
-		moveby1 = MoveBy::create(4, Vec2(0, -100));  */
 	//这里分别判断上下左右四个方向，优先左右，没障碍就巡逻，预判的距离是10，随便设的，比follow那个小点
 	CallFunc* callFunc = CallFunc::create(this, callfunc_selector(Monster::StopAnimation));
 	//创建连续动作  
@@ -493,6 +455,4 @@ Vec2 Monster::tileCoordFromPosition(Vec2 pos)
 	int y = ((my_map->getMapSize().height * my_map->getTileSize().height) - pos.y)
 		/ my_map->getTileSize().height;
 	return Vec2(x, y);
-
-
 }

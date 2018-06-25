@@ -1,9 +1,9 @@
 #include "ipconfig.h"
 
-string IP::getip()
+string IP::getip()//获取IP
 {
 	string line;
-	ifstream IPFile;
+	ifstream IPFile;//利用文件流读取保存
 	int offset;
 	char* search0 = "IPv4 地址 . . . . . . . . . . . . :";
 

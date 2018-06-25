@@ -9,12 +9,12 @@ public:
 	void destroy();
 
 	bool connectServer(const char* serverIP, unsigned short port);
-	void sendMessage(const char* data, int count);
+	void sendMessage(const char* data, int count);//发送信息
 
 	std::function<void(const char* data, int count)> onRecv;
 	std::function<void()> onDisconnect;
 
-	void update(float dt);
+	void update(float dt);//逐帧更新
 
 CC_CONSTRUCTOR_ACCESS:
 	SocketClient(void);

@@ -2,7 +2,11 @@
 #include "cocos2d.h"
 #include <vector>
 #include "Bullet.h"
+#include "ipconfig.h"
+#include <string>
 USING_NS_CC;
+
+
 
 enum DataType
 {

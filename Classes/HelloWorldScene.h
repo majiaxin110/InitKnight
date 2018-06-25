@@ -4,10 +4,6 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 
-
-
-
-
 class HelloWorld : public cocos2d::Scene
 {
 public:

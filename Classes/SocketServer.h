@@ -47,7 +47,7 @@ private:
 private:
 	std::list<HSocket> _clientSockets;
 	std::list<SocketMessage*> _UIMessageQueue;
-	std::mutex   _UIMessageQueueMutex;
+	std::mutex   _UIMessageQueueMutex;//–≈∫≈¡ø
 
 };
 

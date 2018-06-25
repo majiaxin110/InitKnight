@@ -3,7 +3,7 @@
 SocketBase::SocketBase()
 {
 	_bInitSuccess = false;
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)//平台相关
 	WORD wVersionRequested;
 	wVersionRequested = MAKEWORD(2, 0);
 	WSADATA wsaData;
@@ -28,7 +28,7 @@ SocketBase::~SocketBase()
 #endif 
 }
 
-void SocketBase::closeConnect(HSocket socket)
+void SocketBase::closeConnect(HSocket socket)//关闭连接
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 	close(socket);

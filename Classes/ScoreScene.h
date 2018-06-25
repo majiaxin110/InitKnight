@@ -11,13 +11,11 @@ private:
 	int playerScore;
 	//std::string playerName;
 	cocos2d::Label* statusShow;
-	//std::thread* scoThread;
+
 public:
 	static cocos2d::Scene* createScene();
 
 	virtual bool init();
-	//virtual void onEnter();
-	//virtual void onExit();
 
 	void putBackImage(const char* source);
 	void setScore(int sc);
@@ -26,7 +24,6 @@ public:
 	int getPlayerScore();
 	cocos2d::Label* getStatusShow();
 
-	//int uploadScore();
 	// implement the "static create()" method maddnually
 	CREATE_FUNC(ScoreScene);
 };

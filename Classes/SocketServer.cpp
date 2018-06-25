@@ -21,7 +21,7 @@ SocketServer::SocketServer() :
 	_socketServer(0),
 	onRecv(nullptr),
 	onStart(nullptr),
-	onNewConnection(nullptr)
+	onNewConnection(nullptr)//列表初始化
 {
 
 }
@@ -59,7 +59,7 @@ bool SocketServer::startServer(unsigned short port)
 	return true;
 }
 
-bool SocketServer::initServer(unsigned short port)
+bool SocketServer::initServer(unsigned short port)//根据端口号初始化服务端
 {
 	if (_socketServer != 0)
 	{
@@ -160,7 +160,7 @@ void SocketServer::newClientConnected(HSocket socket)
 	}
 }
 
-void SocketServer::recvMessage(HSocket socket)
+void SocketServer::recvMessage(HSocket socket)//接受信息
 {
 	char buff[1024];
 	int ret = 0;
